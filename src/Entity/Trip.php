@@ -72,6 +72,11 @@ class Trip
      */
     private $etat;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $motifAnnulation;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -210,6 +215,18 @@ class Trip
     public function setEtat(?State $etat): self
     {
         $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getMotifAnnulation(): ?string
+    {
+        return $this->motifAnnulation;
+    }
+
+    public function setMotifAnnulation(?string $motifAnnulation): self
+    {
+        $this->motifAnnulation = $motifAnnulation;
 
         return $this;
     }
