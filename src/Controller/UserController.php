@@ -9,12 +9,32 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user", name="user")
+     * @Route("/connexion", name="se_connecter")
      */
-    public function index(): Response
+    public function seConnecter(): Response
     {
-        return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
+        return $this->render('user/connexion.html.twig', [
+            'controller_name' => 'Connexion',
+        ]);
+    }
+
+    /**
+     * @Route("/gestionUtilisateur", name="gestion_utilisateur")
+     */
+    public function gererUtilisateur(): Response
+    {
+        return $this->render('user/inscriptionetmodification.html.twig', [
+            'controller_name' => 'Modifier et créer',
+        ]);
+    }
+
+    /**
+     * @Route("/profil", name="profil")
+     */
+    public function profil(): Response
+    {
+        return $this->render('user/profil.html.twig', [
+            'controller_name' => 'Profil',
         ]);
     }
 }
