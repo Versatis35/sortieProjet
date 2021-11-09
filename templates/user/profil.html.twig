@@ -1,7 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{%  block title %} Mon profil {%  endblock %}
+{%  block title %} Profil de {{ user.pseudo }} {%  endblock %}
 
 {% block body %}
     <h1> Mon profil </h1>
+
+    <div class="card container mt-3 w-50">
+        <h2 class="card-header"> {{ user.pseudo }}</h2>
+
+        <!-- Image de profil -->
+        <div class="card-body row-test">
+            <div class="col">
+                {% if(user.photo != null) %}
+                    <img class="rounded" src="{{ }}" alt="Image de l'utilisateur">
+                {% else %}
+                    <img class="rounded" src="{{ asset('./../img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col">
+            <!-- Prénom -->
+            <div class="row mb-3">
+                <h5 class="form-label"> Prénom </h5>
+                <p class="col">{{ user.prenom }}
+            </div>
+            <!-- Nom -->
+            <div class="row mb-3">
+                <h5 class="form-label"> Nom </h5>
+                <p class="col">{{ user.nom }}
+            </div>
+            <!-- Téléphone -->
+            <div class="row mb-3">
+                <h5 class="form-label"> Téléphone </h5>
+                <p class="col">{{ user.telephone }}
+            </div>
+            <!-- Email -->
+            <div class="row mb-3">
+                <h5 class="form-label"> Email </h5>
+                <p class="col">{{ user.email }}
+            </div>
+            <!-- Site de rattachement -->
+            <div class="row mb-3">
+                <h5 class="form-label"> Site de rattachement </h5>
+                <p class="col">{{ user.site }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
