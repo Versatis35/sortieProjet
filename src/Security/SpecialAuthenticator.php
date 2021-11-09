@@ -24,7 +24,7 @@ class SpecialAuthenticator extends AbstractFormLoginAuthenticator implements Pas
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'se_connecter';
 
     private $entityManager;
     private $urlGenerator;

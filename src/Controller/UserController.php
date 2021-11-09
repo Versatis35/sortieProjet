@@ -11,25 +11,30 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
     /**
      * @Route("/connexion", name="se_connecter")
      */
-    public function seConnecter(Request $request,EntityManagerInterface $em): Response
+    public function seConnecter(AuthenticationUtils $authenticationUtils): Response
     {
-        $user = new User();
-        $formUser = $this->createForm(UserType::class,$user);
-        $formUser->handleRequest($request);
-        if ( $formUser->isSubmitted()){
-            $em->persist($user);
-            $em->flush();
-            return $this->redirectToRoute('home');
-        }
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('user/connexion.html.twig', [
-            '$formUser' =>  $formUser->createView(),
+            'last_username' => $lastUsername,
+            'error' => $error
         ]);
+    }
+
+    /**
+     * @Route("/logout", name="app_logout")
+     */
+    public function logout()
+    {
+        return $this->render('trip/index.html.twig');
     }
 
     /**
