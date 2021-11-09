@@ -3,3 +3,11 @@
     margin-right: 10px;
     width: 40px;
 }
+footer{
+    background:#ccc;
+    position:relative;
+    bottom:0;
+    width:100%;
+    padding-top:50px;
+    height:50px;
+}
