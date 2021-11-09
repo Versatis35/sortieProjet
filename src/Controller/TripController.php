@@ -25,6 +25,10 @@ class TripController extends AbstractController
      */
     public function index(TripRepository $tripRepo, UserRepository $userRepo): Response
     {
+        if($this->container->get('security.authorization_checker')->isGranted('ROLE_USER') == false) {
+            return $this->redirectToRoute('se_connecter');
+        }
+
         $trips = $tripRepo->findAll();
         $authUser = $this->getUser();
 

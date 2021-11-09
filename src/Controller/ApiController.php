@@ -119,7 +119,7 @@ class ApiController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
 
-        $cit = $cityRepo->find(7);
+        /*$cit = $cityRepo->find(7);
 
         $location = new Location();
         $location->setNom('BowlCenter Nantes');
@@ -137,7 +137,7 @@ class ApiController extends AbstractController
         $location->setVille($cit);
         $location->setLatitude('48.10056');
         $location->setLongitude('-1.73245');
-        $em->persist($location);
+        $em->persist($location);*/
 
         $pla = $placeRepo->find(2);
 
@@ -148,7 +148,7 @@ class ApiController extends AbstractController
         $user->setEmail('tillier.steeven@campuseni.fr');
         $user->setTelephone('0604020503');
         $user->setPassword($passwordEncoder->hashPassword($user,'azerty123'));
-        $user->setRoles(['ROLE_ADMIN']);
+        $user->setRoles(['ROLE_USER','ROLE_ADMIN']);
         $user->setSite($pla);
         $em->persist($user);
 
