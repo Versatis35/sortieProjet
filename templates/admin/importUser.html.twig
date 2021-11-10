@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Import d'utilisateur
+{% endblock %}
+
+{% block body %}
+    {{ form_start(uploadform) }} {# <form ...> #}
+    <button class="btn btn-success" id="btnAddTeam">
+        <i class="fa fa-plus"></i>
+    </button>
+    {{ form_end(uploadform) }} {# <form ...> #}
+{% endblock %}

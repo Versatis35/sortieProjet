@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{%  block title %} Créer une sortie {%  endblock %}
+
+{% block body %}
+    <div class="container px-5">
+        <h1 class="text-center">Nouvelle sortie </h1>
+        <div class="row">
+            <div class="col-6">
+
+                {{ form_start(formTrip) }}
+
+                {{ form_row(formTrip.nom) }}
+                {{ form_row(formTrip.dateSortie) }}
+                {{ form_row(formTrip.dateLimite) }}
+                {{ form_row(formTrip.nbPlace) }}
+                {{ form_row(formTrip.duree) }}
+                {{ form_row(formTrip.description) }}
+
+            </div>
+            <div class="col-6">
+                    <label for="orga">Ville organisatrice :</label>
+                    <input class="form-control" type="text" value="lol" readonly>
+                    <br>
+                {{ form_row(formTrip.lieu) }}
+                    <br>
+                    <label for="rue">Rue :</label>
+                    <input class="form-control" type="text" value="Rue" readonly>
+                    <br>
+                    <label for="ville">Ville :</label>
+                    <input class="form-control" type="text" value="Ville" readonly>
+            </div>
+            <div class="row mx-5">
+                <div class="col-4">
+                    {{ form_widget(formTrip) }}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-plus">Enregistrer</i>
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button type="button" class="btn btn-primary">
+                        <i class="fa fa-plus">Publier la sortie</i>
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button type="button" class="btn btn-danger">
+                        <i class="fa fa-plus">Annuler</i>
+                    </button>
+                </div>
+            </div>
+                {{ form_end(formTrip) }}
+        </div>
+    </div>
+
+{% endblock %}

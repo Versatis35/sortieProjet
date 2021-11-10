@@ -21,11 +21,44 @@
                 Sortir
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{{ path('home') }}"> Villes </a></li>
+                    </ul>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{{ path('home') }}"> Sites </a></li>
+                    </ul>
+                </div>
+            {% endif %}
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="{{ path('home') }}"> Mon profil </a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('home') }}"> Accueil </a></li>
                 </ul>
             </div>
+
+            {% if is_granted('ROLE_USER') %}
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{{ path('home') }}"> Mon profil </a></li>
+                    </ul>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{{ path('app_logout')}}">Se déconnecter</a></li>
+                    </ul>
+                </div>
+            {% else %}
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{{ path('se_connecter') }}"> Se connecter </a></li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </nav>
     <!-- END NAVBAR -->
@@ -36,7 +69,7 @@
     </section>
 
     <!-- FOOTER -->
-    <footer class="py-5 bg-dark">
+    <footer class="py-5 bg-dark footer fixed-bottom">
         <div class="container px-4 px-lg-5"><p class="m-0 text-center text-white">Copyright &copy; Sortir - {{ "now"|date('Y') }}</p></div>
     </footer>
     <!-- END FOOTER -->

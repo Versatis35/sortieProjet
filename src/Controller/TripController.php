@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\TripType;
 use App\Repository\PlaceRepository;
+use App\Repository\StateRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,10 +22,14 @@ use Doctrine\ORM\EntityManagerInterface;
 class TripController extends AbstractController
 {
     /**
-     * @Route("/home", name="home")
+     * @Route("/", name="home")
      */
     public function index(TripRepository $tripRepo, UserRepository $userRepo): Response
     {
+        if($this->container->get('security.authorization_checker')->isGranted('ROLE_USER') == false) {
+            return $this->redirectToRoute('se_connecter');
+        }
+
         $trips = $tripRepo->findAll();
         $authUser = $this->getUser();
 
@@ -35,11 +40,12 @@ class TripController extends AbstractController
     }
 
     /**
-     * @Route("/creationSortie", name="creation_sortie")
+     * @Route("/creationSortie/{etat}", name="creation_sortie")
      */
-    public function creation(Request $request, PlaceRepository $placeRepo, CityRepository $cityRepo): Response
+    public function creation($etat = 1, Request $request, StateRepository $stateRepo,PlaceRepository $placeRepo, CityRepository $cityRepo): Response
     {
         $authUser = $this->getUser();
+        //dd($authUser);
         $places = $placeRepo->findAll();
         $cities = $cityRepo->findAll();
         $newTrip = new Trip();
@@ -48,8 +54,11 @@ class TripController extends AbstractController
         $formTrip->handleRequest($request);
 
         if ($formTrip->isSubmitted()){
-            $place = $placeRepo->find($request->get('place'));
-            $newTrip->setLieu($places);
+            //$place = $placeRepo->find($request->get('trip')['lieu']);
+            //$newTrip->setLieu($place);
+            $newTrip->setOrganisateur($authUser);
+            $state = $stateRepo->find($etat);
+            $newTrip->setEtat($state);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($newTrip);
