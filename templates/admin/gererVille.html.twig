@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Gérer les villes {% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <br><h1 style="text-align: center">Gérer les villes</h1><hr>
+    </div><br>
+
+    <h3>Filtrer les villes</h3>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="ex : ENI" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-primary" type="button">Rechercher</button>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Ville</th>
+            <th scope="col">Code postal</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Rennes</td>
+            <td>35000</td>
+            <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
+        </tr>
+        <tr>
+            <td>Nantes</td>
+            <td>44000</td>
+            <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
+        </tr>
+        <tr>
+            <td>Quimper</td>
+            <td>29000</td>
+            <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
+        </tr>
+        <tr>
+            <td>   </td>
+            <td>   </td>
+            <td><button type="button" class="btn btn-success" style="margin-right: 5px">Ajouter</button></td>
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
