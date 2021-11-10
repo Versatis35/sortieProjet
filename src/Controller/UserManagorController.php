@@ -15,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserManagorController extends AbstractController
 {
@@ -40,7 +43,7 @@ class UserManagorController extends AbstractController
             ->add('mdp', PasswordType::class, ['label' => 'Mot de passe', 'attr' => ['value' => $user->getMdp()]])
             ->add('confirmation', PasswordType::class, ['label' => 'Confirmation', 'attr' => ['value' => $user->getMdp()]])
             ->add('ville', EntityType::class, ['class'=>Place::class,'label' => 'Ville', 'attr' => ['value' => $user->getVille()]])
-            ->add('photo', FileType::class, ['label' => 'Photo', 'attr' => ['value' => $user->getPhoto(),'required'  => false, 'accept' => ".png,.jpg,.jpeg"]])
+            ->add('photo', FileType::class, ['label' => 'Photo (.pnj/.jpg)','mapped'=>false,'constraints' => [new File(['maxSize' => '2048k','mimeTypes' => ['image/jpeg','image/png'],'mimeTypesMessage' => 'Please upload a valid image. '])], 'attr' => ['value' => $user->getPhoto(),'required'  => false,'accept' => '.jpg, .jpeg, .png']])
             ->add('enregistrer', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('annuler', ResetType::class, ['label' => 'Annuler'])
             ->getForm();
@@ -52,6 +55,12 @@ class UserManagorController extends AbstractController
 
             $data = $formulaireUser->getData();
             $error = $this->verifMdp($data, $user);
+            if($error == "" && !$data['photo']) {
+                $mime = $data['photo']->getClientMimeType();
+                if($mime !== "image/png" && $mime != "image/jpeg") {
+                    $error = "Format de fichier invalide";
+                }
+            }
             if($error == "")  {
                 $user->setNom($data['nom']);
                 $pseudo = ['pseudo' => $data['pseudo']];
