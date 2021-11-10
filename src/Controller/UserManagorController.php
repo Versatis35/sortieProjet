@@ -84,7 +84,7 @@ class UserManagorController extends AbstractController
     {
         if(in_array($pseudo, $repositoryUser->getAllPseudo()) && $data['pseudo'] != $user->getPseudo())
         {
-            $this->addFlash('alert', "Ce pseudo est déjà prit paar un autre utilisateur !");
+            $this->addFlash('alert', "Ce pseudo est déjà prit par un autre utilisateur !");
         }
     }
 
