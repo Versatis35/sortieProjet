@@ -47,8 +47,23 @@ class UserController extends AbstractController
                 'id'=>$id
             ]
         );
+        $photo = base64_encode(stream_get_contents($user->getPhoto()));
         return $this->render('user/profil.html.twig', [
-            'user'=>$user
+            'user'=>$user,
+            'photo'=>$photo
+        ]);
+    }
+
+    /**
+     * @Route("/profil", name="mon_profil")
+     */
+    public function monProfil(): Response
+    {
+        $user = $this->getUser();
+        $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        return $this->render('user/profil.html.twig', [
+            'user'=>$user,
+            'photo'=>$photo
         ]);
     }
 

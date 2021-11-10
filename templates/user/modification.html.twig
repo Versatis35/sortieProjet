@@ -12,7 +12,7 @@
                 <div class="col">
                     {% if(user.photo != null) %}
                         <!-- TODO: Faire correspondre l'image -->
-                        <img class="rounded" src="{{ imageProfil }}" alt="Image de l'utilisateur">
+                        <img class="rounded" src="data:image/png;base64,{{ photo }}" alt="Image de l'utilisateur">
                     {% else %}
                         <img class="rounded" src="{{ asset('img/imageDefaut.png') }}" alt="Image d'utilisateur par défault">
                     {% endif %}
@@ -60,10 +60,10 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label(formulaireUser.password) }}
+                            {{ form_label(formulaireUser.mdp) }}
                         </div>
                         <div class="col">
-                            {{ form_widget(formulaireUser.password) }}
+                            {{ form_widget(formulaireUser.mdp) }}
                         </div>
                     </div>
                     <div class="row">

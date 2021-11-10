@@ -2,8 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Place;
 use App\Entity\User;
-use Doctrine\DBAL\Types\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -17,16 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserManagorController extends AbstractController
 {
     /**
-     * @Route("/profil/modification", name="modification_profil")
+     * @Route("/myprofil/modification", name="modification_mon_profil")
      */
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         # On appel le repository qui gère les users
         $repositoryUser = $entityManager->getRepository(User::class);
+        $repositoryPlace = $entityManager->getRepository(Place::class);
 
         #TODO :  On récupère l'utilisateur de la session (voir comment on le récupère)
-        $user = $repositoryUser->find(1);
-
+        $user = $this->getUser();
         #Création du formulaire de modification
         $formulaireUser = $this->createFormBuilder([], ['label' => 'options', 'attr' => ['enctype' => 'multipart/form-data']])
             ->add('pseudo', TextType::class, ['label' => 'Pseudo', 'attr' => ['value' => $user->getPseudo()]])
@@ -37,7 +38,7 @@ class UserManagorController extends AbstractController
             ->add('mdp', PasswordType::class, ['label' => 'Mot de passe', 'attr' => ['value' => $user->getMdp()]])
             ->add('confirmation', PasswordType::class, ['label' => 'Confirmation', 'attr' => ['value' => $user->getMdp()]])
             ->add('ville', TextType::class, ['label' => 'Ville', 'attr' => ['value' => $user->getVille()]])
-            //TODO: A compléter ->add('photo', FileType::class, ['label' => 'Photo', 'attr' => ['value' => $profil->getPhoto()]])
+            ->add('photo', FileType::class, ['label' => 'Photo', 'attr' => ['value' => $user->getPhoto()]])
             ->add('enregistrer', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('annuler', ResetType::class, ['label' => 'Annuler'])
             ->getForm();
@@ -57,27 +58,32 @@ class UserManagorController extends AbstractController
             $user->setEmail($data['email']);
             // On vérifie si les mots de passe correspondent
             $this->verifMdp($data, $user);
-            $user->setSite($repositoryUser->find($data['ville']));
+            $strm = fopen($data['photo']->getRealPath(),'rb');
+            $user->setPhoto(stream_get_contents($strm));
+            $site = $repositoryPlace->findOneBy(
+                [
+                    "id" => $data['ville']
+                ]);
+            $user->setSite($site);
             $entityManager->flush();
-            return $this->redirectToRoute('profil');
+            return $this->redirectToRoute('mon_profil');
         }
-
+        $photo = base64_encode(stream_get_contents($user->getPhoto()));
         return $this->render('user/modification.html.twig', [
-                'controller_name' => 'UserManagorController',
                 'formulaireUser' => $formulaireUser->createView(),
-                'user' => $user
-                //TODO: A compléter 'imageProfil' => './../img'
+                'user' => $user,
+                'photo' => $photo
         ]);
     }
 
     public function verifMdp($data, $profil)
     {
-        if($data['password'] != $data['confirmation'])
+        if($data['mdp'] != $data['confirmation'])
         {
             $this->addFlash('alert', "Les mots de passe ne sont pas identiques");
         }
 
-        $profil->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
+        $profil->setPassword(password_hash($data['mdp'], PASSWORD_DEFAULT));
     }
 
     public function verifPseudo($pseudo, $repositoryUser, $data, $user)
