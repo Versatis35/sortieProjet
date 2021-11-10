@@ -1,11 +1,105 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{%  block title %} Modification du profil {{ user.pseudo }} {%  endblock %}
 
 {% block body %}
-    {{ form_start(formUser) }} {# <form ...> #}
-    <button class="btn btn-success" id="btnAddTeam">
-        <i class="fa fa-plus"></i>
-    </button>
-    {{ form_end(formUser) }} {# <form ...> #}
+
+    <div class="card container mt-3">
+        <h2 class="card-header">Mon profil</h2>
+        <div class="card-body">
+            {{ form_start(formulaireProfil) }}
+            <div class="row-test">
+                <div class="col">
+                    {% if(user.photo != null) %}
+                        <!-- TODO: Faire correspondre l'image -->
+                        <img class="rounded" src="{{ imageProfil }}" alt="Image de l'utilisateur">
+                    {% else %}
+                        <img class="rounded" src="{{ asset('img/imageDefaut.png') }}" alt="Image d'utilisateur par défault">
+                    {% endif %}
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.pseudo) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.pseudo) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.prenom) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.prenom) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.nom) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.nom) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.telephone) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.telephone) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.email) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.email) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.password) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.password) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.confirmation) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.confirmation) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label($formulaireProfil.ville) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget($formulaireProfil.ville) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="file" name="{{ field_name(formulaireProfil.photo) }}" id="imgUpload">
+                            <label for="imgUpload" data-browse="Choisir un fichier"> Aucun fichier choisi</label>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button type="reset" class="btn btn-danger">Annuler</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for message in app.flashes('alert') %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}

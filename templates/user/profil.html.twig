@@ -3,19 +3,18 @@
 {%  block title %} Profil de {{ user.pseudo }} {%  endblock %}
 
 {% block body %}
-    <h1> Mon profil </h1>
-
     <div class="card container mt-3 w-50">
-        <h2 class="card-header"> {{ user.pseudo }}</h2>
+        <h2 class="card-header" style="text-align: center"> {{ user.pseudo }}</h2>
 
         <!-- Image de profil -->
         <div class="card-body row-test">
             <div class="col">
-                {% if(user.photo != null) %}
-                    <img class="rounded" src="{{ }}" alt="Image de l'utilisateur">
-                {% else %}
-                    <img class="rounded" src="{{ asset('./../img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">
-                {% endif %}
+{#                {% if(user.photo != null) %}#}
+{#                    <img class="rounded" src="{{ }}" alt="Image de l'utilisateur">#}
+{#                {% else %}#}
+{#                    <img class="rounded" src="{{ asset('./../img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">#}
+{#                {% endif %}#}
+                <img class="imgUser" src="{{ asset('img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">
             </div>
         </div>
 
@@ -46,5 +45,5 @@
                 <p class="col">{{ user.site }}
             </div>
         </div>
-    </div>
+    </div><br>
 {% endblock %}
