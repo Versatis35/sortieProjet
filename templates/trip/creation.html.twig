@@ -4,7 +4,12 @@
 
 {% block body %}
     <div class="container px-5">
-        <h1 class="text-center">Nouvelle sortie </h1>
+        {% if trip.nom != null %}
+            <h1 class="text-center">Modifier sortie : {{ trip.nom }}</h1>
+        {% else %}
+            <h1 class="text-center">Nouvelle sortie </h1>
+        {% endif %}
+
         <div class="row">
             <div class="col-6">
 
@@ -19,37 +24,58 @@
 
             </div>
             <div class="col-6">
-                    <label for="orga">Ville organisatrice :</label>
-                    <input class="form-control" type="text" value="lol" readonly>
+                    <label for="orga" class="mb-2">Ville organisatrice :</label>
+                    <input class="form-control" type="text" value="{{ orga.nom }}" readonly>
                     <br>
-                {{ form_row(formTrip.lieu) }}
-                    <br>
-                    <label for="rue">Rue :</label>
-                    <input class="form-control" type="text" value="Rue" readonly>
-                    <br>
-                    <label for="ville">Ville :</label>
-                    <input class="form-control" type="text" value="Ville" readonly>
+                <div class="row">
+                    <div class="col-11">{{ form_row(formTrip.lieu, {'attr': {'onchange': 'changeSelect(this)'}}) }}</div>
+                    <div class="col-1"><a href=""><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/></svg></a>
+                    </div>
+                </div>
+                <br>
+                <div id="inner">
+                {{ include('trip/addCoordonnees.html.twig', {'location': location, 'city': city}) }}
+                </div>
+                <input type="hidden" id="btn" name="btn" value="0">
             </div>
             <div class="row mx-5">
                 <div class="col-4">
                     {{ form_widget(formTrip) }}
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa fa-plus">Enregistrer</i>
-                    </button>
+                    <button type="submit" class="btn btn-primary" value="1" onclick="changeValueBtn(this)">Enregistrer</button>
                 </div>
                 <div class="col-4">
-                    <button type="button" class="btn btn-primary">
-                        <i class="fa fa-plus">Publier la sortie</i>
-                    </button>
+                    <button type="submit" class="btn btn-primary" value="2" onclick="changeValueBtn(this)">Publier la sortie</button>
                 </div>
                 <div class="col-4">
-                    <button type="button" class="btn btn-danger">
-                        <i class="fa fa-plus">Annuler</i>
-                    </button>
+                    <a href="{{ path('home') }}" class="btn btn-danger">Annuler</a>
                 </div>
             </div>
                 {{ form_end(formTrip) }}
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function changeValueBtn(elem) {
+            let btn = document.getElementById('btn');
+            if (elem.value == 1){
+                btn.value = 1;
+            }else{
+                btn.value = 2;
+            }
+        }
+
+        function changeSelect(element) {
+            let id = element.value;
+            let block = document.getElementById('blockCoord');
+            let innerBlock = document.getElementById('inner');
+
+            let url = 'http://localhost/ProjetSymfony/sortieProjet/public/axiosLocation/' + id;
+            axios.get(url).then(function (response) {
+                    block.remove();
+                    innerBlock.innerHTML = response.data;
+                });
+        }
+    </script>
 
 {% endblock %}

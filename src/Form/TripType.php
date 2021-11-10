@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Trip;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -17,8 +18,8 @@ class TripType extends AbstractType
     {
         $builder
             ->add('nom',TextType::class)
-            ->add('dateSortie',DateType::class)
-            ->add('dateLimite',DateType::class)
+            ->add('dateSortie',DateTimeType::class,['date_widget' => 'single_text','time_widget' => 'single_text'])
+            ->add('dateLimite',DateType::class,['widget' => 'single_text'])
             ->add('nbPlace',IntegerType::class)
             ->add('duree',IntegerType::class)
             ->add('description',TextareaType::class)

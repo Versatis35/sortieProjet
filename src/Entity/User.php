@@ -76,6 +76,11 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
      */
     private $roles = [];
 
+    /**
+     * @ORM\Column(type="blob", nullable=true)
+     */
+    private $photo;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -273,5 +278,17 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
     public function __call($name, $arguments)
     {
         // TODO: Implement @method string getUserIdentifier()
+    }
+
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto($photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
     }
 }

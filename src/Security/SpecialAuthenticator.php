@@ -67,6 +67,7 @@ class SpecialAuthenticator extends AbstractFormLoginAuthenticator implements Pas
             throw new InvalidCsrfTokenException();
         }
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+        if(!$user) $user = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $credentials['email']]);
 
         if (!$user) {
             throw new UsernameNotFoundException('Email could not be found.');
@@ -95,7 +96,6 @@ class SpecialAuthenticator extends AbstractFormLoginAuthenticator implements Pas
         }
 
         return new RedirectResponse($this->urlGenerator->generate('home'));
-        // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl()

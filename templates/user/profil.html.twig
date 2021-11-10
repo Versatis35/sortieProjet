@@ -9,12 +9,11 @@
         <!-- Image de profil -->
         <div class="card-body row-test">
             <div class="col">
-{#                {% if(user.photo != null) %}#}
-{#                    <img class="rounded" src="{{ }}" alt="Image de l'utilisateur">#}
-{#                {% else %}#}
-{#                    <img class="rounded" src="{{ asset('./../img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">#}
-{#                {% endif %}#}
-                <img class="imgUser" src="{{ asset('img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">
+                {% if user.photo != null %}
+                    <img class="mx-auto d-block img-fluid rounded" src="data:image/png;base64,{{ photo }}" alt="Image de l'utilisateur">
+                {% else %}
+                    <img class="rounded" src="{{ asset('img/imageDefaut.png') }}" alt="Image par défaut de l'utilisateur">
+                {% endif %}
             </div>
         </div>
 
@@ -43,6 +42,15 @@
             <div class="row mb-3">
                 <h5 class="form-label"> Site de rattachement </h5>
                 <p class="col">{{ user.site }}
+            </div>
+        </div>
+        <div class="row mx-1">
+            <div class="col-4">
+                <a href="{{ path('modification_mon_profil') }}">
+                    <button class="btn btn-primary">
+                        <i class="fa fa-plus">Modifier le profil</i>
+                    </button>
+                </a>
             </div>
         </div>
     </div><br>

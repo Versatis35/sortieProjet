@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Form\TripType;
-use App\Repository\PlaceRepository;
-use App\Repository\StateRepository;
+use App\Entity\Location;
+use App\Repository\LocationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,10 +12,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Trip;
 use App\Entity\User;
 use App\Entity\City;
+use App\Entity\Place;
+use App\Form\TripType;
+use App\Repository\PlaceRepository;
+use App\Repository\StateRepository;
 use App\Repository\UserRepository;
 use App\Repository\CityRepository;
 use App\Repository\TripRepository;
-use App\Form\CocktailType;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TripController extends AbstractController
@@ -40,70 +42,80 @@ class TripController extends AbstractController
     }
 
     /**
-     * @Route("/creationSortie/{etat}", name="creation_sortie")
+     * @Route("/creationSortie", name="creation_sortie")
      */
-    public function creation($etat = 1, Request $request, StateRepository $stateRepo,PlaceRepository $placeRepo, CityRepository $cityRepo): Response
+    public function creation(Request $request, StateRepository $stateRepo, PlaceRepository $placeRepo, LocationRepository $locRepo): Response
     {
         $authUser = $this->getUser();
-        //dd($authUser);
-        $places = $placeRepo->findAll();
-        $cities = $cityRepo->findAll();
-        $newTrip = new Trip();
+        $location = $locRepo->find(1);
+        $city = $location->getVille();
+        $orga = $placeRepo->find(2);
+        $trip = new Trip();
 
-        $formTrip = $this->createForm(TripType::class,$newTrip);
+        $formTrip = $this->createForm(TripType::class,$trip);
         $formTrip->handleRequest($request);
 
         if ($formTrip->isSubmitted()){
-            //$place = $placeRepo->find($request->get('trip')['lieu']);
-            //$newTrip->setLieu($place);
-            $newTrip->setOrganisateur($authUser);
-            $state = $stateRepo->find($etat);
-            $newTrip->setEtat($state);
+            $trip->setOrganisateur($authUser);
+            $state = $stateRepo->find($request->get('btn'));
+            $trip->setEtat($state);
 
             $em = $this->getDoctrine()->getManager();
-            $em->persist($newTrip);
+            $em->persist($trip);
             $em->flush();
 
             return $this->redirectToRoute('home');
         }
 
         return $this->render('trip/creation.html.twig', [
-            'trip' => $newTrip,
+            'trip' => $trip,
             'user' => $authUser,
-            'places' => $places,
-            'cities' => $cities,
+            'location' => $location,
+            'city' => $city,
+            'orga' => $orga,
             'formTrip' => $formTrip->createView(),
         ]);
     }
 
     /**
-     * @Route("/detail/{id}", name="detail_sortie")
+     * @Route("/detailSortie/{id}", name="detail_sortie")
      */
     public function afficherLeDetail(Trip $trip): Response
     {
+        $orga = $trip->getOrganisateur();
+        $dateSortie = $trip->getDateSortie()->format('Y-m-d');
+        $dateLimite = $trip->getDateLimite()->format('Y-m-d');
+        $lieu = $trip->getLieu();
+        $villeOrg = $orga->getSite()->getNom();
         $users = $trip->getParticipants();
 
         return $this->render('trip/detail.html.twig', [
             'trip' => $trip,
+            'orga' => $orga,
+            'villeOrg' => $villeOrg,
+            'lieu' => $lieu,
             'users' => $users,
+            'dateLimite' => $dateLimite,
+            'dateSortie' => $dateSortie,
         ]);
     }
 
     /**
-     * @Route("/edit/{id}", name="edit_sortie")
+     * @Route("/editSortie/{id}", name="edit_sortie")
      */
-    public function modifier(Request $request, Trip $trip, PlaceRepository $placeRepo, CityRepository $cityRepo): Response
+    public function modifier(Trip $trip, Request $request, StateRepository $stateRepo, LocationRepository $locRepo): Response
     {
+        $orga = $trip->getOrganisateur()->getSite();
+        $location = $trip->getLieu();
+        $city = $location->getVille();
         $authUser = $this->getUser();
-        $places = $placeRepo->findAll();
-        $cities = $cityRepo->findAll();
 
         $formTrip = $this->createForm(TripType::class,$trip);
         $formTrip->handleRequest($request);
 
         if ($formTrip->isSubmitted()){
-            $place = $placeRepo->find($request->get('place'));
-            $trip->setLieu($place);
+            $state = $stateRepo->find($request->get('btn'));
+            $trip->setEtat($state);
 
             $em = $this->getDoctrine()->getManager();
             //$em->persist($trip);
@@ -114,9 +126,10 @@ class TripController extends AbstractController
 
         return $this->render('trip/creation.html.twig', [
             'trip' => $trip,
+            'orga' => $orga,
+            'location' => $location,
+            'city' => $city,
             'user' => $authUser,
-            'places' => $places,
-            'cities' => $cities,
             'formTrip' => $formTrip->createView(),
         ]);
     }
@@ -124,16 +137,46 @@ class TripController extends AbstractController
     /**
      * @Route("/annulationSortie/{id}", name="annuler_sortie")
      */
-    public function annulerLaSortie(Trip $trip, Request $request): Response
+    public function pageAnnulation(Trip $trip): Response
     {
+        $dateSortie = $trip->getDateSortie()->format('Y-m-d');
+        $lieu = $trip->getLieu()->getNom();
+        $orga = $trip->getOrganisateur()->getSite()->getNom();
+
+        return $this->render('trip/annulation.html.twig', [
+            'trip' => $trip,
+            'dateSortie' => $dateSortie,
+            'lieu' => $lieu,
+            'orga' => $orga,
+        ]);
+    }
+
+    /**
+     * @Route("/annulation/{id}", name="annulation")
+     */
+    public function annulerLaSortie(Trip $trip, Request $request, StateRepository $stateRepo): Response
+    {
+        $state = $stateRepo->find(5);
         $trip->setMotifAnnulation($request->get('motif'));
+        $trip->setEtat($state);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($trip);
         $em->flush();
 
-        return $this->render('trip/annulation.html.twig', [
-            'controller_name' => 'annulation d\'une sortie',
+        return $this->redirectToRoute('home');
+    }
+
+    /**
+     * @Route("/axiosLocation/{id}", name="location")
+     */
+    public function addLocation(Location $location): Response
+    {
+        $city = $location->getVille();
+
+        return $this->render('trip/addCoordonnees.html.twig',[
+            'location' => $location,
+            'city' => $city,
         ]);
     }
 }

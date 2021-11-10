@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{%  block title %} Détail sortie {{ trip.nom }}{%  endblock %}
+
+{% block body %}
+    <div class="container px-5">
+        <h2 class="text-center">Détail de la sortie : {{ trip.nom }}</h2>
+        <br>
+        <div class="row">
+            <div class="col-6">
+                <label for="nom">Nom</label>
+                <p name="nom">{{ trip.nom }}</p>
+            </div>
+            <div class="col-6">
+                <label for="nom">Ville organisatrice</label>
+                <p name="nom">{{ villeOrg }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <label for="dateSortie">Date sortie</label>
+                <p name="dateSortie">{{ dateSortie }}</p>
+            </div>
+            <div class="col-6">
+                <label for="lieu">Lieu</label>
+                <p name="lieu">{{ lieu.nom }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <label for="dateLimit">Date limite</label>
+                <p name="dateLimit">{{ dateLimite }}</p>
+
+                <label for="nbPlace">Nombre de places</label>
+                <p name="nbPlace">{{ trip.nbPlace }}</p>
+
+                <label for="duree">Durée</label>
+                <p name="duree">{{ trip.duree }}</p>
+
+                <label for="description">Description</label>
+                <p name="description">{{ trip.description }}</p>
+            </div>
+            <div class="col-6"></div>
+        </div>
+    </div>
+
+{% endblock %}
