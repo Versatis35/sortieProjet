@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{%  block title %}Création utilisateur{%  endblock %}
+
+{% block body %}
+
+    <div class="card container mt-3">
+        <h2 class="card-header">Créer un utilisateur</h2>
+        <div class="card-body">
+            {{ form_start(formulaireUser) }}
+            <div class="row-test">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.pseudo) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.pseudo) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.prenom) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.prenom) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.nom) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.nom) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.telephone) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.telephone) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.email) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.email) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.password) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.password) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.site) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.site) }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(formulaireUser) }}
+        </div>
+        {% for message in app.flashes('alert') %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

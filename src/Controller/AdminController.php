@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
 use App\Repository\PlaceRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -11,9 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
@@ -83,4 +82,29 @@ class AdminController extends AbstractController
             "uploadform"=>$form->createView()
         ]);
     }
+    /**
+     * @Route("/admin/creationUtilisateur", name="creation_utilisateur")
+     */
+    public function creerUtilisateur(Request $request, UserPasswordHasherInterface $passwordEncoder): Response
+    {
+        $user = new User();
+        $formUser = $this->createForm(UserType::class,$user);
+        $formUser->handleRequest($request);
+        if ($formUser->isSubmitted() && $formUser->isValid()) {
+            $user->setRoles(["ROLE_USER"]);
+            $user->setPassword(
+                $passwordEncoder->hashPassword(
+                    $user,
+                    $formUser->get('password')->getData()
+                )
+            );
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            return $this->redirectToRoute('home');
+        }
+
+        return $this->render('admin/creation.html.twig', ['formulaireUser' => $formUser->createView(),
+        ]);
+}
 }

@@ -38,54 +38,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/gestionUtilisateur/{type}/{id}", name="gestion_utilisateur")
-     */
-    public function gererUtilisateur($type,$id,Request $request,EntityManagerInterface $em, UserRepository $repo, UserPasswordHasherInterface $passwordEncoder): Response
-    {
-        // Type = modification ou creation
-        switch($type) {
-            case "modification":
-                $user = new User();
-                $formUser = $this->createForm(UserType::class,$user);
-                $formUser->handleRequest($request);
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($user);
-                $em->flush();
-                break;
-            case "creation":
-                $user = new User();
-                $formUser = $this->createForm(UserType::class,$user);
-                $formUser->handleRequest($request);
-                //if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
-                    if ($formUser->isSubmitted()) {
-                        $user->setRoles(["ROLE_USER"]);
-                        $user->setPassword(
-                            $passwordEncoder->hashPassword(
-                                $user,
-                                $formUser->get('password')->getData()
-                            )
-                        );
-                        $em = $this->getDoctrine()->getManager();
-                        $em->persist($user);
-                        $em->flush();
-                        return $this->redirectToRoute('home');
-                    }
-
-                //} else {
-                    //throw $this->createNotFoundException('Vous n\'avez pas accès à cette page');
-                //}
-                break;
-            case 1:
-                throw $this->createNotFoundException('Page inexistante');
-                break;
-        }
-
-        return $this->render('user/inscriptionetmodification.html.twig', [
-            'formUser' => $formUser->createView()
-        ]);
-    }
-
-    /**
      * @Route("/profil/{id}", name="profil")
      */
     public function profil($id, UserRepository $repo): Response

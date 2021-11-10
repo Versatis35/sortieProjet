@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\City;
-use App\Entity\Location;
 use App\Entity\Place;
 use App\Entity\State;
 use App\Entity\User;
 use App\Repository\CityRepository;
 use App\Repository\PlaceRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,6 +26,48 @@ class ApiController extends AbstractController
         return $this->render('api/index.html.twig', [
             'controller_name' => 'ApiController',
         ]);
+    }
+
+    /**
+     * @Route("/api/createAdmin", name="api_create_admin" ,methods={"POST"})
+     */
+    public function creerAdmin(Request $request,EntityManagerInterface $em, UserPasswordHasherInterface $passwordEncoder): Response
+    {
+        $site = new Place();
+        $site->setNom("default");
+        $json =$request->getContent();
+        $obj = json_decode($json);
+        $user = new User();
+        $user->setNom($obj->nom);
+        $user->setPrenom($obj->prenom);
+        $user->setPseudo($obj->pseudo);
+        $user->setTelephone($obj->telephone);
+        $user->setSite($site);
+        $user->setEmail($obj->email);
+        $user->setPassword(
+            $passwordEncoder->hashPassword(
+                $user,
+                $obj->password
+            )
+        );
+        $user->setRoles(["ROLE_USER","ROLE_ADMIN"]);
+        $em->persist($site);
+        $em->persist($user);
+        $em->flush();
+        return $this->json($user);
+    }
+
+    /**
+     * @Route("/api/createAdmin", name="api_voir_admin" ,methods={"GET"})
+     */
+    public function voirAdmin(UserRepository $repo): Response
+    {
+        $user = $repo->findOneBy(
+            [
+                "pseudo"=>"Admin"
+            ]
+        );
+        return $this->json($user);
     }
 
     /**
