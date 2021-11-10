@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{%  block title %} Créer une sortie {%  endblock %}
+
+{% block body %}
+    <div class="container px-5">
+        <h1 class="text-center">Annuler une sortie</h1>
+        <form action="{{ path('annulation',{id: trip.id}) }}" method="POST" >
+            <p class="texte-center">Nom de la sortie : {{ trip.nom }}</p>
+            <p class="texte-center">Date de la sortie : {{ dateSortie }}</p>
+            <p class="texte-center">Ville organisatrice : {{ orga }}</p>
+            <p class="texte-center">Lieu : {{ lieu }}</p>
+            <label for="motif" class="mb-2">Motif :</label>
+            <textarea class="form-control" rows="6" name="motif"></textarea>
+            <br>
+            <button type="submit" class="btn btn-warning">Confirmer</button>
+        </form>
+    </div>
+
+{% endblock %}
