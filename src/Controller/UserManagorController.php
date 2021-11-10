@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Place;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,8 +38,8 @@ class UserManagorController extends AbstractController
             ->add('email', TextType::class, ['label' => 'Email', 'attr' => ['value' => $user->getEmail()]])
             ->add('mdp', PasswordType::class, ['label' => 'Mot de passe', 'attr' => ['value' => $user->getMdp()]])
             ->add('confirmation', PasswordType::class, ['label' => 'Confirmation', 'attr' => ['value' => $user->getMdp()]])
-            ->add('ville', TextType::class, ['label' => 'Ville', 'attr' => ['value' => $user->getVille()]])
-            ->add('photo', FileType::class, ['label' => 'Photo', 'attr' => ['value' => $user->getPhoto()]])
+            ->add('ville', EntityType::class, ['class'=>Place::class,'label' => 'Ville', 'attr' => ['value' => $user->getVille()]])
+            ->add('photo', FileType::class, ['label' => 'Photo', 'attr' => ['value' => $user->getPhoto(),'required'  => false, 'accept' => ".png,.jpg,.jpeg"]])
             ->add('enregistrer', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('annuler', ResetType::class, ['label' => 'Annuler'])
             ->getForm();
