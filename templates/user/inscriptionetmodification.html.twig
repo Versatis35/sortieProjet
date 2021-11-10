@@ -7,7 +7,7 @@
     <div class="card container mt-3">
         <h2 class="card-header">Mon profil</h2>
         <div class="card-body">
-            {{ form_start(formulaireProfil) }}
+            {{ form_start(formulaireUser) }}
             <div class="row-test">
                 <div class="col">
                     {% if(user.photo != null) %}
@@ -20,71 +20,71 @@
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            {{ form_label($formulaireProfil.pseudo) }}
+                            {{ form_label(formulaireUser.pseudo) }}
                         </div>
                         <div class="col">
-                            {{ form_widget($formulaireProfil.pseudo) }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ form_label($formulaireProfil.prenom) }}
-                        </div>
-                        <div class="col">
-                            {{ form_widget($formulaireProfil.prenom) }}
+                            {{ form_widget(formulaireUser.pseudo) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label($formulaireProfil.nom) }}
+                            {{ form_label(formulaireUser.prenom) }}
                         </div>
                         <div class="col">
-                            {{ form_widget($formulaireProfil.nom) }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ form_label($formulaireProfil.telephone) }}
-                        </div>
-                        <div class="col">
-                            {{ form_widget($formulaireProfil.telephone) }}
+                            {{ form_widget(formulaireUser.prenom) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label($formulaireProfil.email) }}
+                            {{ form_label(formulaireUser.nom) }}
                         </div>
                         <div class="col">
-                            {{ form_widget($formulaireProfil.email) }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ form_label($formulaireProfil.password) }}
-                        </div>
-                        <div class="col">
-                            {{ form_widget($formulaireProfil.password) }}
+                            {{ form_widget(formulaireUser.nom) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label($formulaireProfil.confirmation) }}
+                            {{ form_label(formulaireUser.telephone) }}
                         </div>
                         <div class="col">
-                            {{ form_widget($formulaireProfil.confirmation) }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ form_label($formulaireProfil.ville) }}
-                        </div>
-                        <div class="col">
-                            {{ form_widget($formulaireProfil.ville) }}
+                            {{ form_widget(formulaireUser.telephone) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <input type="file" name="{{ field_name(formulaireProfil.photo) }}" id="imgUpload">
+                            {{ form_label(formulaireUser.email) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.email) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.password) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.password) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.confirmation) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.confirmation) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_label(formulaireUser.ville) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.ville) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="file" name="{{ field_name(formulaireUser.photo) }}" id="imgUpload">
                             <label for="imgUpload" data-browse="Choisir un fichier"> Aucun fichier choisi</label>
                         </div>
                     </div>

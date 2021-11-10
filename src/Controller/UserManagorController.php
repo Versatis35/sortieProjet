@@ -64,7 +64,7 @@ class UserManagorController extends AbstractController
 
         return $this->render('user/inscriptionetmodification.html.twig', [
                 'controller_name' => 'UserManagorController',
-                'formulaireProfil' => $formulaireUser->createView(),
+                'formulaireUser' => $formulaireUser->createView(),
                 'user' => $user
                 //TODO: A compléter 'imageProfil' => './../img'
         ]);

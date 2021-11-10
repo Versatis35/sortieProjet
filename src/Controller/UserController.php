@@ -56,7 +56,7 @@ class UserController extends AbstractController
                 $user = new User();
                 $formUser = $this->createForm(UserType::class,$user);
                 $formUser->handleRequest($request);
-                if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                //if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
                     if ($formUser->isSubmitted()) {
                         $user->setRoles(["ROLE_USER"]);
                         $user->setPassword(
@@ -71,9 +71,9 @@ class UserController extends AbstractController
                         return $this->redirectToRoute('home');
                     }
 
-                } else {
-                    throw $this->createNotFoundException('Vous n\'avez pas accès à cette page');
-                }
+                //} else {
+                    //throw $this->createNotFoundException('Vous n\'avez pas accès à cette page');
+                //}
                 break;
             case 1:
                 throw $this->createNotFoundException('Page inexistante');
