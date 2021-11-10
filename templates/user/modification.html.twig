@@ -89,14 +89,14 @@
                         </div>
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        <button type="reset" class="btn btn-danger">Annuler</button>
+                        <button type="submit" class="mx-auto d-block btn btn-primary">Enregistrer</button>
+                        <a href="{{ path("mon_profil") }}"><button type="button" class="mx-auto d-block btn btn-danger">Annuler</button></a>
                     </div>
                 </div>
             </div>
         </div>
-        {% for message in app.flashes('alert') %}
-            <div class="alert alert-success" role="alert">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">
                 {{ message }}
             </div>
         {% endfor %}

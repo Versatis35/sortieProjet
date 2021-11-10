@@ -26,6 +26,7 @@ class UserManagorController extends AbstractController
         # On appel le repository qui gère les users
         $repositoryUser = $entityManager->getRepository(User::class);
         $repositoryPlace = $entityManager->getRepository(Place::class);
+        $error = "";
 
         #TODO :  On récupère l'utilisateur de la session (voir comment on le récupère)
         $user = $this->getUser();
@@ -48,43 +49,52 @@ class UserManagorController extends AbstractController
 
         if($formulaireUser->isSubmitted())
         {
+
             $data = $formulaireUser->getData();
-            $user->setNom($data['nom']);
-            $pseudo = ['pseudo' => $data['pseudo']];
-            // On vérifie si le pseudo n'est pas prit
-            $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
-            $user->setPseudo($data['pseudo']);
-            $user->setPrenom($data['prenom']);
-            $user->setTelephone($data['telephone']);
-            $user->setEmail($data['email']);
-            // On vérifie si les mots de passe correspondent
-            $this->verifMdp($data, $user);
-            $strm = fopen($data['photo']->getRealPath(),'rb');
-            $user->setPhoto(stream_get_contents($strm));
-            $site = $repositoryPlace->findOneBy(
-                [
-                    "id" => $data['ville']
-                ]);
-            $user->setSite($site);
-            $entityManager->flush();
-            return $this->redirectToRoute('mon_profil');
+            $error = $this->verifMdp($data, $user);
+            if($error == "")  {
+                $user->setNom($data['nom']);
+                $pseudo = ['pseudo' => $data['pseudo']];
+                // On vérifie si le pseudo n'est pas prit
+                $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
+                $user->setPseudo($data['pseudo']);
+                $user->setPrenom($data['prenom']);
+                $user->setTelephone($data['telephone']);
+                $user->setEmail($data['email']);
+                // On vérifie si les mots de passe correspondent
+                if($data['photo'] != "") {
+                    $strm = fopen($data['photo']->getRealPath(), 'rb');
+                    $user->setPhoto(stream_get_contents($strm));
+                }
+                $site = $repositoryPlace->findOneBy(
+                    [
+                        "id" => $data['ville']
+                    ]);
+                $user->setSite($site);
+                $entityManager->flush();
+                return $this->redirectToRoute('mon_profil');
+            }
         }
         $photo = base64_encode(stream_get_contents($user->getPhoto()));
         return $this->render('user/modification.html.twig', [
                 'formulaireUser' => $formulaireUser->createView(),
                 'user' => $user,
-                'photo' => $photo
+                'photo' => $photo,
+                'error' => $error
         ]);
     }
 
     public function verifMdp($data, $profil)
     {
+        $error = "";
         if($data['mdp'] != $data['confirmation'])
         {
-            $this->addFlash('alert', "Les mots de passe ne sont pas identiques");
+            $error = "Les mots de passe ne sont pas identiques";
+            $this->addFlash('error', "Les mots de passe ne sont pas identiques");
         }
 
         $profil->setPassword(password_hash($data['mdp'], PASSWORD_DEFAULT));
+        return $error;
     }
 
     public function verifPseudo($pseudo, $repositoryUser, $data, $user)

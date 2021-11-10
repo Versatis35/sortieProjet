@@ -21,6 +21,7 @@ class UserController extends AbstractController
     public function seConnecter(AuthenticationUtils $authenticationUtils): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError();
+
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('user/connexion.html.twig', [
