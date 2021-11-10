@@ -62,7 +62,7 @@ class UserManagorController extends AbstractController
             return $this->redirectToRoute('profil');
         }
 
-        return $this->render('user/inscriptionetmodification.html.twig', [
+        return $this->render('user/modification.html.twig', [
                 'controller_name' => 'UserManagorController',
                 'formulaireUser' => $formulaireUser->createView(),
                 'user' => $user
