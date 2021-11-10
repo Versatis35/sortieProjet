@@ -22,7 +22,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class TripController extends AbstractController
 {
     /**
-     * @Route("/home", name="home")
+     * @Route("/", name="home")
      */
     public function index(TripRepository $tripRepo, UserRepository $userRepo): Response
     {

@@ -43,9 +43,7 @@ class AdminController extends AbstractController
             $header = NULL;
             $data = array();
             if (($handle = fopen($file->getRealPath(), 'r')) !== FALSE) {
-
                 while (($row = fgetcsv($handle, 1000, ";", '"')) !== FALSE) {
-
                     if(!$header) {
                         $header = $row;
                     } else {
