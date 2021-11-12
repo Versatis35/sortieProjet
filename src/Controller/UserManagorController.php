@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Image;
 
 class UserManagorController extends AbstractController
 {
@@ -36,21 +37,30 @@ class UserManagorController extends AbstractController
         #Création du formulaire de modification
         $formulaireUser = $this->createFormBuilder([], ['label' => 'options', 'attr' => ['enctype' => 'multipart/form-data']])
             ->add('pseudo', TextType::class, ['label' => 'Pseudo', 'attr' => ['value' => $user->getPseudo()]])
-            ->add('prenom', TextType::class, ['label' => 'Prénom', 'attr' => ['value' => $user->getPrenom()]])
-            ->add('nom', TextType::class, ['label' => 'Nom', 'attr' => ['value' => $user->getNom()]])
             ->add('telephone', TextType::class, ['label' => 'Prénom', 'attr' => ['value' => $user->getTelephone()]])
             ->add('email', TextType::class, ['label' => 'Email', 'attr' => ['value' => $user->getEmail()]])
             ->add('mdp', PasswordType::class, ['label' => 'Mot de passe', 'attr' => ['value' => $user->getMdp()]])
             ->add('confirmation', PasswordType::class, ['label' => 'Confirmation', 'attr' => ['value' => $user->getMdp()]])
-            ->add('ville', EntityType::class, ['class'=>Place::class,'label' => 'Ville', 'attr' => ['value' => $user->getVille()]])
-            ->add('photo', FileType::class, ['label' => 'Photo (.pnj/.jpg)','mapped'=>false,'constraints' => [new File(['maxSize' => '2048k','mimeTypes' => ['image/jpeg','image/png'],'mimeTypesMessage' => 'Please upload a valid image. '])], 'attr' => ['value' => $user->getPhoto(),'required'  => false,'accept' => '.jpg, .jpeg, .png']])
+            ->add('photo', FileType::class, [
+                'label' => 'Photo (.pnj/.jpg)',
+                'mapped'=> true,
+                'constraints' => [
+                    new File([
+                        // Le maxSize ne s'applique pas si dans config>packages>dev>web_profiler only_exceptions n'est pas à true
+                        'maxSize' => '20M',
+                        'maxSizeMessage' => "La limite de taille d'image est de {{ limit }} bytes",
+                    ])
+                ],
+            ])
             ->add('enregistrer', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('annuler', ResetType::class, ['label' => 'Annuler'])
             ->getForm();
-
         $formulaireUser->handleRequest($request);
-
-        if($formulaireUser->isSubmitted())
+        if($formulaireUser->isSubmitted() && !$formulaireUser->isValid()) {
+            dd($formulaireUser);
+        }
+        // Si isValid n'est pas mis, problème lors de l'upload
+        if($formulaireUser->isSubmitted() && $formulaireUser->isValid())
         {
 
             $data = $formulaireUser->getData();
@@ -62,12 +72,10 @@ class UserManagorController extends AbstractController
                 }
             }
             if($error == "")  {
-                $user->setNom($data['nom']);
                 $pseudo = ['pseudo' => $data['pseudo']];
                 // On vérifie si le pseudo n'est pas prit
                 $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
                 $user->setPseudo($data['pseudo']);
-                $user->setPrenom($data['prenom']);
                 $user->setTelephone($data['telephone']);
                 $user->setEmail($data['email']);
                 // On vérifie si les mots de passe correspondent
@@ -75,11 +83,6 @@ class UserManagorController extends AbstractController
                     $strm = fopen($data['photo']->getRealPath(), 'rb');
                     $user->setPhoto(stream_get_contents($strm));
                 }
-                $site = $repositoryPlace->findOneBy(
-                    [
-                        "id" => $data['ville']
-                    ]);
-                $user->setSite($site);
                 $entityManager->flush();
                 return $this->redirectToRoute('mon_profil');
             }

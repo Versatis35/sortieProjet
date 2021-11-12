@@ -7,7 +7,7 @@
     <div class="card container mt-3">
         <h2 class="card-header">Mon profil</h2>
         <div class="card-body">
-            {{ form_start(formulaireUser) }}
+            {{ form_start(formulaireUser, {'multipart': true}) }}
             <div class="row-test">
                 <div class="col">
                     {% if(user.photo != null) %}
@@ -28,18 +28,18 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label(formulaireUser.prenom) }}
+                            Prénom
                         </div>
-                        <div class="col">
-                            {{ form_widget(formulaireUser.prenom) }}
+                        <div class="col profilInfo">
+                            {{ user.prenom }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label(formulaireUser.nom) }}
+                            Nom
                         </div>
-                        <div class="col">
-                            {{ form_widget(formulaireUser.nom) }}
+                        <div class="col profilInfo">
+                            {{ user.nom }}
                         </div>
                     </div>
                     <div class="row">
@@ -76,18 +76,22 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            {{ form_label(formulaireUser.ville) }}
+                            Site de rattachement
                         </div>
-                        <div class="col">
-                            {{ form_widget(formulaireUser.ville) }}
+                        <div class="col profilInfo">
+                            {{ user.site.nom }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <input type="file" name="{{ field_name(formulaireUser.photo) }}" id="imgUpload">
-                            <label for="imgUpload" data-browse="Choisir un fichier"> Aucun fichier choisi</label>
+                            {{ form_label(formulaireUser.photo) }}
+                        </div>
+                        <div class="col">
+                            {{ form_widget(formulaireUser.photo) }}
                         </div>
                     </div>
+                    <div class="invisible">{{ form_rest(formulaireUser) }}</div>
+
                     <div>
                         <button type="submit" class="mx-auto d-block btn btn-primary">Enregistrer</button>
                         <a href="{{ path("mon_profil") }}"><button type="button" class="mx-auto d-block btn btn-danger">Annuler</button></a>
