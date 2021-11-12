@@ -9,7 +9,7 @@
         {% else %}
             <h1 class="text-center">Nouvelle sortie </h1>
         {% endif %}
-
+        <div class="invisible" id="url">{{ app.request.getBaseURL() }}</div>
         <div class="row">
             <div class="col-6">
 
@@ -69,8 +69,9 @@
             let id = element.value;
             let block = document.getElementById('blockCoord');
             let innerBlock = document.getElementById('inner');
-
-            let url = 'http://localhost/ProjetSymfony/sortieProjet/public/axiosLocation/' + id;
+            let UrlBase = document.getElementById('url').innerHTML;
+            let url = 'http://localhost' + UrlBase +'/axiosLocation/' + id;
+            console.log(url);
             axios.get(url).then(function (response) {
                     block.remove();
                     innerBlock.innerHTML = response.data;

@@ -56,9 +56,6 @@ class UserManagorController extends AbstractController
             ->add('annuler', ResetType::class, ['label' => 'Annuler'])
             ->getForm();
         $formulaireUser->handleRequest($request);
-        if($formulaireUser->isSubmitted() && !$formulaireUser->isValid()) {
-            dd($formulaireUser);
-        }
         // Si isValid n'est pas mis, problème lors de l'upload
         if($formulaireUser->isSubmitted() && $formulaireUser->isValid())
         {

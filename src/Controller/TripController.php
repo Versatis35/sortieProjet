@@ -49,7 +49,7 @@ class TripController extends AbstractController
         $authUser = $this->getUser();
         $location = $locRepo->find(1);
         $city = $location->getVille();
-        $orga = $placeRepo->find(2);
+        $orga = $authUser->getSite();
         $trip = new Trip();
 
         $formTrip = $this->createForm(TripType::class,$trip);
@@ -74,6 +74,7 @@ class TripController extends AbstractController
             'city' => $city,
             'orga' => $orga,
             'formTrip' => $formTrip->createView(),
+            'url' =>  $this->getParameter('kernel.project_dir')
         ]);
     }
 

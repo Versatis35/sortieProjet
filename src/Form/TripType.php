@@ -21,7 +21,7 @@ class TripType extends AbstractType
             ->add('dateSortie',DateTimeType::class,['date_widget' => 'single_text','time_widget' => 'single_text'])
             ->add('dateLimite',DateType::class,['widget' => 'single_text'])
             ->add('nbPlace',IntegerType::class)
-            ->add('duree',IntegerType::class)
+            ->add('duree',IntegerType::class, ['label'=>'Durée (min)'])
             ->add('description',TextareaType::class)
             //->add('motifAnnulation')
             ->add('lieu', null,['choice_label' => 'Nom'])
