@@ -84,7 +84,11 @@ class UserManagorController extends AbstractController
                 return $this->redirectToRoute('mon_profil');
             }
         }
-        $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        if($user->getPhoto() != null) {
+            $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        } else {
+            $photo = "";
+        }
         return $this->render('user/modification.html.twig', [
                 'formulaireUser' => $formulaireUser->createView(),
                 'user' => $user,

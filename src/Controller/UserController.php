@@ -48,7 +48,11 @@ class UserController extends AbstractController
                 'id'=>$id
             ]
         );
-        $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        if($user->getPhoto() != null) {
+            $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        } else {
+            $photo = "";
+        }
         return $this->render('user/profil.html.twig', [
             'user'=>$user,
             'photo'=>$photo
@@ -61,7 +65,11 @@ class UserController extends AbstractController
     public function monProfil(): Response
     {
         $user = $this->getUser();
-        $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        if($user->getPhoto() != null) {
+            $photo = base64_encode(stream_get_contents($user->getPhoto()));
+        } else {
+            $photo = "";
+        }
         return $this->render('user/profil.html.twig', [
             'user'=>$user,
             'photo'=>$photo
