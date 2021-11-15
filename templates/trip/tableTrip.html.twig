@@ -1,0 +1,55 @@
+<table class="table table-striped" id="removeTable">
+    <thead>
+    <tr>
+        <th scope="col">Nom de la sortie</th>
+        <th scope="col">Date de la sortie</th>
+        <th scope="col">Clôture</th>
+        <th scope="col">Inscrits/Places</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Inscrit</th>
+        <th scope="col">Organisateur</th>
+        <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for trip in trips %}
+        <tr>
+            <td>{{ trip.nom }}</td>
+            <td>{{ trip.dateSortie|date('Y-m-d H:i') }}</td>
+            <td>{{ trip.dateLimite|date('Y-m-d') }}</td>
+            <td>{{ (trip.participants|length) + 1}}/{{ trip.nbPlace }}</td>
+            <td>{{ trip.etat.libelle }}</td>
+            <td>{{ trip.nom }}</td>
+            <td>{{ trip.organisateur.prenom }} {{ trip.organisateur.nom }}</td>
+            <td>
+                {% if trip.etat.id != 1 and trip.etat.id != 5%}
+                    <a href="" class="btn btn-primary" id="afficher">Afficher</a>
+                {% endif %}
+                {% if trip.organisateur.id == user.id and trip.etat.id == 1%}
+                    <a href="" class="btn btn-primary" id="modifier">Modifier</a>
+                {% endif %}
+                {% if trip.organisateur.id == user.id and trip.etat.id == 1  %}
+                    <a href="" class="btn btn-success" id="publier">Publier</a>
+                {% endif %}
+                {% if trip.organisateur.id != user.id and user not in trip.participants %}
+                    {% if trip.etat.id == 3 or trip.etat.id == 4 %}
+                        <a href="" class="btn btn-success" id="inscrire">S'inscrire</a>
+                    {% endif %}
+                {% endif %}
+                {% if trip.organisateur.id != user.id %}
+                    {% if trip.etat.id == 3 or trip.etat.id == 4 %}
+                        {% for part in trip.participants %}
+                            {% if part.id == user.id %}
+                                <a href="" class="btn btn-danger" id="desister">Se desister</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+                {% if trip.organisateur.id == user.id and trip.etat.id == 1%}
+                    <a href="" class="btn btn-danger" id="annuler">Annuler</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

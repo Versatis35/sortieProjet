@@ -8,6 +8,7 @@ use App\Entity\State;
 use App\Entity\User;
 use App\Repository\CityRepository;
 use App\Repository\PlaceRepository;
+use App\Repository\TripRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -159,9 +160,11 @@ class ApiController extends AbstractController
     /**
      * @Route("/upRelation", name="relation")
      */
-    public function upRelation(CityRepository $cityRepo, PlaceRepository $placeRepo, UserPasswordHasherInterface $passwordEncoder): Response
+    public function upRelation(CityRepository $cityRepo,UserRepository $userRepo, PlaceRepository $placeRepo, TripRepository $tripRepo, UserPasswordHasherInterface $passwordEncoder): Response
     {
         $em = $this->getDoctrine()->getManager();
+        $trip = $tripRepo->find(1);
+        $user = $userRepo->find(5);
 
         /*$cit = $cityRepo->find(7);
 
@@ -183,20 +186,34 @@ class ApiController extends AbstractController
         $location->setLongitude('-1.73245');
         $em->persist($location);*/
 
-        $pla = $placeRepo->find(2);
+        /*$pla = $placeRepo->find(2);
 
         $user = new User();
-        $user->setNom('Tillier');
-        $user->setPseudo('SteevT');
-        $user->setPrenom('Steeven');
-        $user->setEmail('tillier.steeven@campuseni.fr');
-        $user->setTelephone('0604020503');
+        $user->setNom('Hallet');
+        $user->setPseudo('val');
+        $user->setPrenom('Valentin');
+        $user->setEmail('valentin@campuseni.fr');
+        $user->setTelephone('0605520503');
         $user->setPassword($passwordEncoder->hashPassword($user,'azerty123'));
         $user->setRoles(['ROLE_USER','ROLE_ADMIN']);
         $user->setSite($pla);
         $em->persist($user);
 
+        $us = new User();
+        $us->setNom('Trochu');
+        $us->setPseudo('Log');
+        $us->setPrenom('Logan');
+        $us->setEmail('logan@campuseni.fr');
+        $us->setTelephone('0645520503');
+        $us->setPassword($passwordEncoder->hashPassword($user,'azerty123'));
+        $us->setRoles(['ROLE_USER','ROLE_ADMIN']);
+        $us->setSite($pla);*/
+        $trip->addParticipant($user);
+
+        $em->persist($trip);
+
         $em->flush();
+        //$trip->addParticipant($us);
 
         dd('finish again');
     }
