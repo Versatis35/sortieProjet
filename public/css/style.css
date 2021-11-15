@@ -39,3 +39,8 @@ a {
 .invisible {
     display:none;
 }
+
+button {
+    border: none;
+    background-color: transparent;
+}

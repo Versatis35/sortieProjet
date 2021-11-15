@@ -2,8 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Location;
 use App\Entity\Trip;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -24,7 +27,9 @@ class TripType extends AbstractType
             ->add('duree',IntegerType::class, ['label'=>'Durée (min)'])
             ->add('description',TextareaType::class)
             //->add('motifAnnulation')
-            ->add('lieu', null,['choice_label' => 'Nom'])
+            ->add('lieu', EntityType::class,[
+                'class' => Location::class,
+            ])
             //->add('participants')
             //->add('organisateur')
             //->add('etat')

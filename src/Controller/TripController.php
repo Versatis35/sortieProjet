@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Location;
+use App\Form\LocationType;
 use App\Repository\LocationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,21 +51,45 @@ class TripController extends AbstractController
         $location = $locRepo->find(1);
         $city = $location->getVille();
         $orga = $authUser->getSite();
-        $trip = new Trip();
+        $error = "";
 
+        $trip = new Trip();
+        $locForm = new Location();
+        $formLocation = $this->createForm(LocationType::class,$locForm);
         $formTrip = $this->createForm(TripType::class,$trip);
         $formTrip->handleRequest($request);
+        $formLocation->handleRequest($request);
+        if ($formTrip->isSubmitted() && $formTrip->isValid()){
+            $dateDebut = $formTrip->get('dateSortie');
+            $dateFin = $formTrip->get('dateLimite');
+            if($dateFin->getData() < $dateDebut->getData()) {
+                $error = [
+                    'messageKey' => -1,
+                    'messageData' => "La date de fin ne peut être inférieure à la date de début"
+                ];
+            }
+            if($error == "") {
+                $trip->setOrganisateur($authUser);
+                $state = $stateRepo->find($request->get('btn'));
+                $trip->setEtat($state);
 
-        if ($formTrip->isSubmitted()){
-            $trip->setOrganisateur($authUser);
-            $state = $stateRepo->find($request->get('btn'));
-            $trip->setEtat($state);
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($trip);
+                $em->flush();
 
+                return $this->redirectToRoute('home');
+            }
+        }
+
+        if($formLocation->isSubmitted() && $formLocation->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($trip);
+            $em->persist($locForm);
             $em->flush();
-
-            return $this->redirectToRoute('home');
+            $location = $locForm;
+            $locForm = new Location();
+            $formLocation = $this->createForm(LocationType::class, $locForm);
+            $trip->setLieu($location);
+            $formTrip = $this->createForm(TripType::class,$trip);
         }
 
         return $this->render('trip/creation.html.twig', [
@@ -74,7 +99,9 @@ class TripController extends AbstractController
             'city' => $city,
             'orga' => $orga,
             'formTrip' => $formTrip->createView(),
-            'url' =>  $this->getParameter('kernel.project_dir')
+            'formLocation' => $formLocation->createView(),
+            'url' =>  $this->getParameter('kernel.project_dir'),
+            'error' => $error
         ]);
     }
 

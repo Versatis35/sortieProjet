@@ -114,4 +114,9 @@ class City
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->nom;
+    }
 }
