@@ -164,9 +164,7 @@
                 marker = new L.Marker(e.latlng).addTo(carteAdd);
                 document.getElementById("location_latitude").value = e.latlng.lat;
                 document.getElementById("location_longitude").value = e.latlng.lng;
-                console.log(e)
                 let urlStreetMap = "https://nominatim.openstreetmap.org/reverse?format=xml&lat="+ e.latlng.lat +"&lon="+ e.latlng.lng +"&zoom=10&format=json&addressdetails=1"
-                console.log(urlStreetMap)
                 axios.get(urlStreetMap).then(function (response) {
                     let ville = response.data.address.town;
                     if(ville === undefined) ville = response.data.address.city;
@@ -208,6 +206,8 @@
                     let longitude;
                     latitude = response.data[0].lat;
                     longitude = response.data[0].lon;
+                    document.getElementById("location_latitude").value = latitude;
+                    document.getElementById("location_longitude").value = longitude;
                     marker = new L.Marker([latitude, longitude]).addTo(carteAdd);
                     carteAdd.flyTo([latitude, longitude], 15);
                 } else {
