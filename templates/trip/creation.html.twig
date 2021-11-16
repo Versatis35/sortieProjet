@@ -13,6 +13,8 @@
             <h1 class="text-center">Nouvelle sortie </h1>
         {% endif %}
         <div class="invisible" id="url">{{ app.request.getBaseURL() }}</div>
+        <div class="invisible" id="latitudeDefault">{{ latitude }}</div>
+        <div class="invisible" id="longitudeDefault">{{ longitude }}</div>
         <div class="row">
             <div class="col-6">
 
@@ -31,20 +33,26 @@
                     <input class="form-control" type="text" value="{{ orga.nom }}" readonly>
                     <br>
                 <div class="row">
-                    <div class="col-11">{{ form_row(formTrip.lieu,{'attr': {'onchange': 'changeSelect(this)' }}) }}</div>
+                    <div class="col-11">{{ form_row(formTrip.lieu,{'attr': {'onchange': 'changeSelect(this)', 'id': 'idLieu' }}) }}</div>
                     <div class="col-1">
-                        <button type="button"  data-toggle="modal" data-target="#exampleModalCenter">
+                        <button type="button" onclick="modalLaunch()" data-toggle="modal" data-target="#exampleModalCenter">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
                             </svg>
                         </button>
 
                     </div>
+                    <div class="col-1">
+                        <div id="map">
+                            <!-- Ici s'affichera la carte -->
+                        </div>
+                    </div>
                 </div>
                 <br>
                 <div id="inner">
                 {{ include('trip/addCoordonnees.html.twig', {'location': location, 'city': city}) }}
                 </div>
+                <br>
                 <input type="hidden" id="btn" name="btn" value="0">
             </div>
             <div class="row mx-5">
@@ -76,24 +84,157 @@
                 <div class="modal-body">
                     {{ form_row(formLocation.nom) }}
                     {{ form_row(formLocation.rue) }}
-                    {{ form_row(formLocation.latitude) }}
-                    {{ form_row(formLocation.longitude) }}
-                    {{ form_row(formLocation.ville) }}
+                    {{ form_row(formLocation.ville , { 'attr': {'onchange':'actualiserMap()'}}) }}
+                </div>
+                <div id="mapadd">
+                    <!-- Ici s'affichera la carte -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="submit" onclick="creerVille()" class="btn btn-primary">Sauvegarder</button>
                 </div>
                 {{ form_end(formLocation) }}
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
+    <!-- Fichiers Javascript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="application/javascript">
+        var marker;
+        var macarte = null;
+        var carteAdd = null;
+        var lat = "";
+        var lon = "";
+
+        window.onload = function(){
+            // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
+            lat = document.getElementById('latitudeDefault').innerHTML;
+            lon = document.getElementById('longitudeDefault').innerHTML;
+            initMap();
+            //macarte.once('click', addMarker);
+            marker = new L.Marker([lat,lon]).addTo(macarte);
+        };
+
+        // On initialise la latitude et la longitude de Paris (centre de la carte)
+        let idLieu = document.getElementById('trip_lieu').value;
+        let UrlBase = document.getElementById('url').innerHTML;
+        let url = 'http://localhost' + UrlBase +'/api/getCoordonnees/' + idLieu;
+        axios.get(url).then(function (response) {
+            let tableau = response.data;
+            lat = tableau.latitude;
+            lon = tableau.longitude;
+        });
+
+        $(window).trigger('resize');
+
+        // Fonction d'initialisation de la carte
+        function initMap() {
+            // Créer l'objet "macarte" et l'insèrer dans l'élément HTML qui a l'ID "map"
+            macarte = L.map('map').setView([lat, lon], 15);
+            // Leaflet ne récupère pas les cartes (tiles) sur un serveur par défaut. Nous devons lui préciser où nous souhaitons les récupérer. Ici, openstreetmap.fr
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                // Il est toujours bien de laisser le lien vers la source des données
+                attribution: 'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
+                minZoom: 1,
+                maxZoom: 20
+            }).addTo(macarte);
+        }
+
+        function modalLaunch(){
+            carteAdd = L.map('mapadd');
+            carteAdd.setView([lat, lon], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                // Il est toujours bien de laisser le lien vers la source des données
+                attribution: 'données © <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
+                minZoom: 1,
+                maxZoom: 20
+            }).addTo(carteAdd);
+            carteAdd.once('click', addMarker);
+            setTimeout(carteAdd.invalidateSize.bind(carteAdd), 200)
+        }
+
+        function addMarker(e){
+            carteAdd.on('click', function (e) {
+                if (marker) {
+                    carteAdd.removeLayer(marker);
+                }
+                marker = new L.Marker(e.latlng).addTo(carteAdd);
+                console.log(e)
+                let urlStreetMap = "https://nominatim.openstreetmap.org/reverse?format=xml&lat="+ e.latlng.lat +"&lon="+ e.latlng.lng +"&zoom=10&format=json&addressdetails=1"
+                console.log(urlStreetMap)
+                axios.get(urlStreetMap).then(function (response) {
+                    let ville = response.data.address.town;
+                    if(ville === undefined) ville = response.data.address.city;
+                    if(ville === undefined) ville = response.data.address.village;
+                    let choixVille = document.getElementById("location_ville");
+                    let creation = true;
+                    if(ville !== undefined) {
+                        for (let uneVille of choixVille.children) {
+                            if (uneVille.innerHTML === ville) {
+                                creation = false;
+                                uneVille.selected = true;
+                            }
+                            if(uneVille.value == "0") {
+                                choixVille.removeChild(uneVille);
+                            }
+                        }
+                        if (creation === true) {
+                            var opt = document.createElement('option');
+                            opt.value = 0;
+                            opt.innerHTML = ville;
+                            opt.selected = true;
+                            choixVille.appendChild(opt);
+                        }
+                    }
+                });
+            });
+        }
+
+        function actualiserMap() {
+            let address = document.getElementById('location_rue').value;
+            address += ", " + document.getElementById('location_ville').selectedOptions[0].innerHTML;
+            let urlStreetMap = 'https://nominatim.openstreetmap.org/search?format=json&limit=3&q="'+address+'"'
+            if (marker) {
+                carteAdd.removeLayer(marker);
+            }
+            axios.get(urlStreetMap).then(function (response) {
+                if(response.data[0] !== undefined) {
+                    let latitude;
+                    let longitude;
+                    latitude = response.data[0].lat;
+                    longitude = response.data[0].lon;
+                    marker = new L.Marker([latitude, longitude]).addTo(carteAdd);
+                    carteAdd.flyTo([latitude, longitude], 15);
+                } else {
+                    window.alert("Lieu introuvable");
+                    document.getElementById('location_rue').value = "";
+                    document.getElementById('location_ville').selectedOptions[0].selected = false;
+                }
+            });
+        }
+
+        function creerVille(){
+            let UrlBase = document.getElementById('url').innerHTML;
+            let ville = document.getElementById('location_ville').selectedOptions[0].innerHTML;
+            let url = 'https://nominatim.openstreetmap.org/?addressdetails=1&q='+ ville +'&format=json&limit=1'
+            let latChange;
+            let lonChange;
+            axios.get(url).then(function (response) {
+                block.remove();
+                innerBlock.innerHTML = response.data;
+            });
+            url = 'http://localhost' + UrlBase +'/api/createVille';
+            axios.post(url).then(function (response) {
+                block.remove();
+                innerBlock.innerHTML = response.data;
+            });
+        }
+
         $('#myModal').on('shown.bs.modal', function () {
             $('#myInput').trigger('focus')
         })
+
         function changeValueBtn(elem) {
             let btn = document.getElementById('btn');
             if (elem.value == 1){
@@ -109,10 +250,24 @@
             let innerBlock = document.getElementById('inner');
             let UrlBase = document.getElementById('url').innerHTML;
             let url = 'http://localhost' + UrlBase +'/axiosLocation/' + id;
+            let latChange;
+            let lonChange;
             axios.get(url).then(function (response) {
                     block.remove();
                     innerBlock.innerHTML = response.data;
                 });
+            url = 'http://localhost' + UrlBase +'/api/getCoordonnees/' + id;
+            axios.get(url).then(function (response) {
+                let tableau = response.data;
+                latChange = tableau.latitude;
+                lonChange = tableau.longitude;
+                if (marker) { // check
+                    macarte.removeLayer(marker); // remove
+                }
+                console.log(latChange)
+                marker = new L.Marker([latChange,lonChange]).addTo(macarte);
+                macarte.flyTo([latChange, lonChange], 15);
+            });
         }
     </script>
 

@@ -49,6 +49,8 @@ class TripController extends AbstractController
     {
         $authUser = $this->getUser();
         $location = $locRepo->find(1);
+        $latitude = $location->getLatitude();
+        $longitude = $location->getLongitude();
         $city = $location->getVille();
         $orga = $authUser->getSite();
         $error = "";
@@ -81,7 +83,8 @@ class TripController extends AbstractController
             }
         }
 
-        if($formLocation->isSubmitted() && $formLocation->isValid()) {
+        if($formLocation->isSubmitted()) {
+            dd($formLocation);
             $em = $this->getDoctrine()->getManager();
             $em->persist($locForm);
             $em->flush();
@@ -101,7 +104,9 @@ class TripController extends AbstractController
             'formTrip' => $formTrip->createView(),
             'formLocation' => $formLocation->createView(),
             'url' =>  $this->getParameter('kernel.project_dir'),
-            'error' => $error
+            'error' => $error,
+            'latitude'=> $latitude,
+            'longitude'=> $longitude
         ]);
     }
 
