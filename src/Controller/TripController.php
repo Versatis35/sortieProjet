@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Location;
 use App\Form\LocationType;
 use App\Repository\LocationRepository;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -259,18 +260,117 @@ class TripController extends AbstractController
     }
 
     /**
-     * @Route("/axiosTable/", name="majTrip")
+     * @Route("/axiosTable/", name="majTrip" ,methods={"POST"})
      */
-    public function updateTable(Request $request, TripRepository $tripRepo): Response
+    public function updateTable(Request $request, TripRepository $tripRepo, PlaceRepository $siteRepo): Response
     {
-        $data = $request->get('data');
+        $result = $tripRepo->createQueryBuilder('o');
+        $result->leftJoin('o.participants', 'participant');
+        $result->leftJoin('o.etat', 'etat');
+        $result->leftJoin('o.organisateur', 'organisateur');
+        $result->select(["o.nom","o.dateSortie","o.dateLimite","etat.libelle","o.nbPlace","COUNT(participant.id) AS nb_participants","organisateur.pseudo as Organisateur"]);
+        $result->groupBy('o.id');
+        $json =$request->getContent();
+        $obj = json_decode($json);
+        $obj = $obj->data;
+        $userActual = $this->getUser();
+        $site = $obj->site;
+        $searchWord = $obj->searchWord;
+        $dateStart = $obj->dateStart;
+        $dateEnd = $obj->dateEnd;
+        $checkOrga = $obj->checkOrga;
+        $checkInscrit = $obj->checkInscrit;
+        $checkNot = $obj->checkNot;
+        $checkLast = $obj->checkLast;
 
-        $trip = $tripRepo->findAll();
+        $firstWhereSet = false;
 
-        return $this->render('trip/tableTrip.html.twig',[
-            'data' => $data,
-            'trips' => $trip,
-            'user' => $this->getUser(),
-        ]);
+        // Si le site = 0 : Tous les sites
+        if($site !== "0") {
+            $result->innerJoin("o.organisateur",'user');
+            $result->where("user.site = :site");
+            $result->setParameter("site",$site);
+            $firstWhereSet = true;
+        }
+        if($searchWord !== "") {
+            if($firstWhereSet) {
+                $result->andWhere("o.nom LIKE :nom");
+                $result->setParameter("nom", "%".$searchWord."%");
+            } else {
+                $result->where("o.nom LIKE :nom");
+                $result->setParameter("nom", "%".$searchWord."%");
+                $firstWhereSet = true;
+            }
+        }
+
+        if($dateStart !== "") {
+            if($firstWhereSet) {
+                $result->andWhere("o.dateSortie >= :dateDebut");
+                $result->setParameter("dateDebut", $dateStart);
+            } else {
+                $result->where("o.dateSortie >= :dateDebut");
+                $result->setParameter("dateDebut", $dateStart);
+                $firstWhereSet = true;
+            }
+        }
+
+        if($dateEnd !== "") {
+            if($firstWhereSet) {
+                $result->andWhere("o.dateSortie <= :dateLimite");
+                $result->setParameter("dateLimite", $dateEnd);
+            } else {
+                $result->where("o.dateSortie <= :dateLimite");
+                $result->setParameter("dateLimite", $dateEnd);
+                $firstWhereSet = true;
+            }
+        }
+
+        if($checkOrga == true) {
+            if($firstWhereSet) {
+                $result->andWhere("o.organisateur = :organisateur");
+                $result->setParameter("organisateur", $userActual);
+            } else {
+                $result->where("o.organisateur <= :organisateur");
+                $result->setParameter("organisateur", $userActual);
+                $firstWhereSet = true;
+            }
+        }
+
+        if($checkInscrit == true) {
+            if($firstWhereSet) {
+                $result->andWhere(":user MEMBER OF o.participants");
+                $result->setParameter("user", $userActual);
+            } else {
+                $result->where(":user MEMBER OF o.participants");
+                $result->setParameter("user", $userActual);
+                $firstWhereSet = true;
+            }
+        }
+
+        if($checkNot == true) {
+            if($firstWhereSet) {
+                $result->andWhere(":user NOT MEMBER OF o.participants");
+                $result->setParameter("user", $userActual);
+            } else {
+                $result->where(":user NOT MEMBER OF o.participants");
+                $result->setParameter("user", $userActual);
+                $firstWhereSet = true;
+            }
+        }
+        $dateNow = getdate()["year"] . "/" . getdate()["mon"] ."/". getdate()["mday"];
+        if($checkLast == true) {
+            if($firstWhereSet) {
+                $result->andWhere("o.dateLimite < :dateJour");
+                $result->setParameter("dateJour", $dateNow);
+            } else {
+                $result->where("o.dateLimite < :dateJour");
+                $result->setParameter("dateJour", $dateNow);
+                $firstWhereSet = true;
+            }
+        }
+
+        $tabTrip = $result->getQuery()->getResult();
+
+        return $this->json($tabTrip);
     }
 }
