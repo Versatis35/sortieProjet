@@ -259,15 +259,18 @@ class TripController extends AbstractController
     }
 
     /**
-     * @Route("/axiosTable/{id}", name="majTrip")
+     * @Route("/axiosTable/", name="majTrip")
      */
-    public function updateTable(Location $location): Response
+    public function updateTable(Request $request, TripRepository $tripRepo): Response
     {
-        $city = $location->getVille();
+        $data = $request->get('data');
 
-        return $this->render('trip/addCoordonnees.html.twig',[
-            'location' => $location,
-            'city' => $city,
+        $trip = $tripRepo->findAll();
+
+        return $this->render('trip/tableTrip.html.twig',[
+            'data' => $data,
+            'trips' => $trip,
+            'user' => $this->getUser(),
         ]);
     }
 }

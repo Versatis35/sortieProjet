@@ -52,7 +52,7 @@
         </div>
         <div class="col-3">
             <div class="d-grid gap-2 mt-5">
-                <button class="btn btn-primary mt-5" type="submit">Rechercher</button>
+                <button class="btn btn-primary mt-5" onclick="doFilter()" type="submit">Rechercher</button>
             </div>
         </div>
     </div>
@@ -97,8 +97,8 @@
         })
         .then(function (reponse) {
             console.log(reponse);
-            table.remove();
-            addBlock.innerHTML = response.data;
+            //table.remove();
+            //addBlock.innerHTML = response.data;
         });
     }
 </script>
