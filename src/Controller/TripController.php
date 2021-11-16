@@ -86,6 +86,8 @@ class TripController extends AbstractController
             $locForm->setVille($repoCity->findOneBy(['id'=>$request->request->get("location")['ville']]));
             $em->persist($locForm);
             $em->flush();
+            $latitude = $locForm->getLatitude();
+            $longitude = $locForm->getLongitude();
             $location = $locForm;
             $locForm = new Location();
             $formLocation = $this->createForm(LocationType::class, $locForm);

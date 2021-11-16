@@ -76,7 +76,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/createVille/{nom}", name="api_create_ville" ,methods={"GET"})
+     * @Route("/api/createVille/{nom}", name="api_exist_ville" ,methods={"GET"})
      */
     public function isVilleExist($nom,CityRepository $repo): Response
     {

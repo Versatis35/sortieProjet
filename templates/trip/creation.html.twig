@@ -229,21 +229,25 @@
             });
             if(document.getElementById('location_ville').selectedOptions[0].value !== "0") {
                 document.getElementById('location').submit();
-                return;
-            }
-            url = 'https://nominatim.openstreetmap.org/?addressdetails=1&q='+ ville +'&format=json&limit=1'
-            let codePostal;
-            let pays;
-            axios.get(url).then(function (response) {
-                codePostal = response.data[0].address.postcode;
-                pays = response.data[0].address.country;
-                let urlbis = 'http://localhost' + UrlBase +'/api/createVille';
-                axios.post(urlbis, {nom:ville,codePostal:codePostal,pays:pays}).then( response => {
-                    document.getElementById('location_ville').selectedOptions[0].value = response.data.id;
-                    document.getElementById('location').submit();
+            } else {
+                url = 'https://nominatim.openstreetmap.org/?addressdetails=1&q=' + ville + '&format=json&limit=1'
+                let codePostal;
+                let pays;
+                console.log(url)
+                axios.get(url).then(function (response) {
+                    codePostal = response.data[0].address.postcode;
+                    pays = response.data[0].address.country;
+                    if(codePostal === undefined) {
+                        codePostal = response.data.address.postcode;
+                        pays = response.data.address.country;
+                    }
+                    let urlbis = 'http://localhost' + UrlBase + '/api/createVille';
+                    axios.post(urlbis, {nom: ville, codePostal: codePostal, pays: pays}).then(response => {
+                        document.getElementById('location_ville').selectedOptions[0].value = response.data.id;
+                        document.getElementById('location').submit();
+                    });
                 });
-            });
-
+            }
 
         }
 
