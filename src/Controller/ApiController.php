@@ -62,17 +62,30 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/createVille", name="api_create_ville" ,methods={"POST"})
      */
-    public function creerVille(Request $request,EntityManagerInterface $em, StateRepository $repo): Response
+    public function creerVille(Request $request,EntityManagerInterface $em): Response
     {
         $json =$request->getContent();
         $obj = json_decode($json);
         $city = new City();
         $city->setNom($obj->nom);
         $city->setCodePostal($obj->codePostal);
-        $city->setPays($repo->findOneBy(['libelle'=>$obj->pays]));
+        $city->setPays($obj->pays);
         $em->persist($city);
         $em->flush();
         return $this->json($city);
+    }
+
+    /**
+     * @Route("/api/createVille/{nom}", name="api_create_ville" ,methods={"GET"})
+     */
+    public function isVilleExist($nom,CityRepository $repo): Response
+    {
+        $ville = $repo->findOneBy(['nom'=>$nom]);
+        if($ville === null) {
+            return $this->json(null);
+        } else {
+            return $this->json($ville);
+        }
     }
 
     /**

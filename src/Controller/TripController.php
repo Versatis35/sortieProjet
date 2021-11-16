@@ -47,14 +47,15 @@ class TripController extends AbstractController
     /**
      * @Route("/creationSortie", name="creation_sortie")
      */
-    public function creation(Request $request, StateRepository $stateRepo, PlaceRepository $placeRepo, LocationRepository $locRepo): Response
+    public function creation(Request $request, StateRepository $stateRepo, PlaceRepository $placeRepo, LocationRepository $locRepo, CityRepository $repoCity): Response
     {
         $authUser = $this->getUser();
         $location = $locRepo->find(1);
+        $latitude = $location->getLatitude();
+        $longitude = $location->getLongitude();
         $city = $location->getVille();
         $orga = $authUser->getSite();
         $error = "";
-
         $trip = new Trip();
         $locForm = new Location();
         $formLocation = $this->createForm(LocationType::class,$locForm);
@@ -74,17 +75,15 @@ class TripController extends AbstractController
                 $trip->setOrganisateur($authUser);
                 $state = $stateRepo->find($request->get('btn'));
                 $trip->setEtat($state);
-
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($trip);
                 $em->flush();
-
                 return $this->redirectToRoute('home');
             }
         }
-
-        if($formLocation->isSubmitted() && $formLocation->isValid()) {
+        if($formLocation->isSubmitted()) {
             $em = $this->getDoctrine()->getManager();
+            $locForm->setVille($repoCity->findOneBy(['id'=>$request->request->get("location")['ville']]));
             $em->persist($locForm);
             $em->flush();
             $location = $locForm;
@@ -93,7 +92,6 @@ class TripController extends AbstractController
             $trip->setLieu($location);
             $formTrip = $this->createForm(TripType::class,$trip);
         }
-
         return $this->render('trip/creation.html.twig', [
             'trip' => $trip,
             'user' => $authUser,
@@ -103,7 +101,9 @@ class TripController extends AbstractController
             'formTrip' => $formTrip->createView(),
             'formLocation' => $formLocation->createView(),
             'url' =>  $this->getParameter('kernel.project_dir'),
-            'error' => $error
+            'error' => $error,
+            'latitude'=> $latitude,
+            'longitude'=> $longitude
         ]);
     }
 

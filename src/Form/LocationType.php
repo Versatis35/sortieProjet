@@ -20,8 +20,8 @@ class LocationType extends AbstractType
                 'class'=>City::class,
                 'mapped'=>false
             ])
-            //->add('latitude')
-            //->add('longitude')
+            ->add('latitude')
+            ->add('longitude')
         ;
     }
 
