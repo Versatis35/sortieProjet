@@ -3,6 +3,63 @@
 {%  block title %} Accueil {%  endblock %}
 
 {% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-9"></div>
+        <div class="col-3">
+            <h5>Date du jour : {{ 'now'|date('d - m -Y') }}</h5>
+            <h5>Participant : {{ user.prenom }} {{ user.nom }} </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5">
+            <h6>Filtrer les sorties</h6>
+            <label for="site">Site : </label>
+            <select class="form-control" id="site" name="site">
+                <option value="0">Tous les sites</option>
+                {% for place in places %}
+                    <option value="{{ place.id }}">{{ place.nom }}</option>
+                {% endfor %}
+            </select>
+            <label for="content">Le nom de la sortie contient : </label>
+            <input class="form-control" type="search" name="content" id="content">
+            <div class="row">
+                <div class="col-6">
+                    <label for="dateStart">Entre </label>
+                    <input class="form-control" type="date" id="dateStart" name="dateStart">
+                </div>
+                <div class="col-6">
+                    <label for="dateEnd"> et </label>
+                    <input class="form-control" type="date" id="dateEnd" name="dateEnd">
+                </div>
+            </div>
+        </div>
+        <div class="col-4 mt-3">
+            <div class="form-check border border-dark mt-5">
+                <label for="orga" class="form-check-label">Sorties dont je suis l'organisateur/trice</label>
+                <input type="checkbox" class="form-check-input" name="orga" id="orga">
 
+                <label for="inscrit" class="form-check-label">Sorties auxquelles je suis inscrit/e</label>
+                <input type="checkbox" class="form-check-input" name="inscrit" id="inscrit">
+
+                <label for="notInscrit" class="form-check-label">Sorties auxquelles je ne suis pas inscrit/e</label>
+                <input type="checkbox" class="form-check-input" name="notInscrit" id="notInscrit">
+
+                <label for="last" class="form-check-label">Sorties passées</label>
+                <input type="checkbox" class="form-check-input" name="last" id="last">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="d-grid gap-2 mt-5">
+                <button class="btn btn-primary mt-5" type="submit">Rechercher</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    {{ include('trip/tableTrip.html.twig', {'trips': trips, 'user': user}) }}
+    <br>
+    <a href="{{ path('creation_sortie') }}" class="btn btn-primary">Créer une sortie</a>
+
+</div>
 
 {% endblock %}

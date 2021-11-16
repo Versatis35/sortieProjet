@@ -27,7 +27,7 @@ class TripController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function index(TripRepository $tripRepo, UserRepository $userRepo): Response
+    public function index(TripRepository $tripRepo, PlaceRepository $placeRepo): Response
     {
         if($this->container->get('security.authorization_checker')->isGranted('ROLE_USER') == false) {
             return $this->redirectToRoute('se_connecter');
@@ -35,10 +35,12 @@ class TripController extends AbstractController
 
         $trips = $tripRepo->findAll();
         $authUser = $this->getUser();
+        $places = $placeRepo->findAll();
 
         return $this->render('trip/index.html.twig', [
             'trips' => $trips,
             'user' => $authUser,
+            'places' => $places,
         ]);
     }
 
@@ -193,50 +195,6 @@ class TripController extends AbstractController
         $trip->setMotifAnnulation($request->get('motif'));
         $trip->setEtat($state);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($trip);
-        $em->flush();
-
-        return $this->redirectToRoute('home');
-    }
-
-    /**
-     * @Route("/inscrire/{id}", name="inscription")
-     */
-    public function inscrireALaSortie($id, TripRepository $repo): Response
-    {
-        $trip = $repo->findOneBy(['id'=>$id]);
-        $authUser = $this->getUser();
-        $authUser->addSorty($trip);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($authUser);
-        $em->flush();
-
-        return $this->redirectToRoute('home');
-    }
-
-    /**
-     * @Route("/desister/{id}", name="se_desister")
-     */
-    public function desisterALaSortie($id, TripRepository $repo): Response
-    {
-        $trip = $repo->findOneBy(['id'=>$id]);
-        $authUser = $this->getUser();
-        $authUser->removeSorty($trip);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($authUser);
-        $em->flush();
-
-        return $this->redirectToRoute('home');
-    }
-
-    /**
-     * @Route("/cloturer/{id}", name="cloturer")
-     */
-    public function cloturerLaSortie($id, TripRepository $repo, StateRepository $repoEtat): Response
-    {
-        $trip = $repo->findOneBy(['id'=>$id]);
-        $trip->setEtat($repoEtat->findOneBy(['libelle'=>'Clôturée']));
         $em = $this->getDoctrine()->getManager();
         $em->persist($trip);
         $em->flush();
