@@ -51,8 +51,6 @@ class TripController extends AbstractController
     {
         $authUser = $this->getUser();
         $location = $locRepo->find(1);
-        $latitude = $location->getLatitude();
-        $longitude = $location->getLongitude();
         $city = $location->getVille();
         $orga = $authUser->getSite();
         $error = "";
@@ -85,8 +83,7 @@ class TripController extends AbstractController
             }
         }
 
-        if($formLocation->isSubmitted()) {
-            dd($formLocation);
+        if($formLocation->isSubmitted() && $formLocation->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($locForm);
             $em->flush();
@@ -106,10 +103,22 @@ class TripController extends AbstractController
             'formTrip' => $formTrip->createView(),
             'formLocation' => $formLocation->createView(),
             'url' =>  $this->getParameter('kernel.project_dir'),
-            'error' => $error,
-            'latitude'=> $latitude,
-            'longitude'=> $longitude
+            'error' => $error
         ]);
+    }
+
+    /**
+     * @Route("/publierSortie/{id}", name="publier_sortie")
+     */
+    public function publierSortie(Trip $trip, StateRepository $stateRepo): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $state = $stateRepo->find(2);
+        $trip->setEtat($state);
+        $em->persist($trip);
+        $em->flush();
+
+        return $this->redirectToRoute('home');
     }
 
     /**
@@ -203,9 +212,54 @@ class TripController extends AbstractController
     }
 
     /**
+     * @Route("/inscriptionSortie/{id}", name="inscriptionSortie")
+     */
+    public function inscriptionSortie(Trip $trip, StateRepository $stateRepo): Response
+    {
+        $user = $this->getUser();
+        $trip->addParticipant();
+        $trip->setEtat($user);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($trip);
+        $em->flush();
+
+        return $this->redirectToRoute('home');
+    }
+
+    /**
+     * @Route("/desistement/{id}", name="desistement")
+     */
+    public function desisterSortie(Trip $trip, StateRepository $stateRepo): Response
+    {
+        $user = $this->getUser();
+        $trip->addParticipant();
+        $trip->removeParticipant($user);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($trip);
+        $em->flush();
+
+        return $this->redirectToRoute('home');
+    }
+
+    /**
      * @Route("/axiosLocation/{id}", name="location")
      */
     public function addLocation(Location $location): Response
+    {
+        $city = $location->getVille();
+
+        return $this->render('trip/addCoordonnees.html.twig',[
+            'location' => $location,
+            'city' => $city,
+        ]);
+    }
+
+    /**
+     * @Route("/axiosTable/{id}", name="majTrip")
+     */
+    public function updateTable(Location $location): Response
     {
         $city = $location->getVille();
 

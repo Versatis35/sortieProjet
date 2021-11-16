@@ -23,30 +23,28 @@
             <td>{{ trip.organisateur.prenom }} {{ trip.organisateur.nom }}</td>
             <td>
                 {% if trip.etat.id != 1 and trip.etat.id != 5%}
-                    <a href="" class="btn btn-primary" id="afficher">Afficher</a>
+                    <a href="{{ path('detail_sortie', {'id': trip.id}) }}" class="btn btn-primary" id="afficher">Afficher</a>
                 {% endif %}
                 {% if trip.organisateur.id == user.id and trip.etat.id == 1%}
-                    <a href="" class="btn btn-primary" id="modifier">Modifier</a>
+                    <a href="{{ path('edit_sortie', {'id': trip.id}) }}" class="btn btn-primary" id="modifier">Modifier</a>
                 {% endif %}
                 {% if trip.organisateur.id == user.id and trip.etat.id == 1  %}
-                    <a href="" class="btn btn-success" id="publier">Publier</a>
+                    <a href="{{ path('publier_sortie', {'id': trip.id}) }}" class="btn btn-success" id="publier">Publier</a>
                 {% endif %}
                 {% if trip.organisateur.id != user.id and user not in trip.participants %}
-                    {% if trip.etat.id == 3 or trip.etat.id == 4 %}
-                        <a href="" class="btn btn-success" id="inscrire">S'inscrire</a>
+                    {% if trip.etat.id == 2 or trip.etat.id == 4 %}
+                        <a href="{{ path('inscriptionSortie', {'id': trip.id}) }}" class="btn btn-success" id="inscrire">S'inscrire</a>
                     {% endif %}
                 {% endif %}
-                {% if trip.organisateur.id != user.id %}
-                    {% if trip.etat.id == 3 or trip.etat.id == 4 %}
-                        {% for part in trip.participants %}
-                            {% if part.id == user.id %}
-                                <a href="" class="btn btn-danger" id="desister">Se desister</a>
-                            {% endif %}
-                        {% endfor %}
+                {% if trip.organisateur.id != user.id and user in trip.participants%}
+                    {% if trip.etat.id == 2 or trip.etat.id == 4 %}
+                        <a href="{{ path('desistement', {'id': trip.id}) }}" class="btn btn-danger" id="desister">Se desister</a>
                     {% endif %}
                 {% endif %}
-                {% if trip.organisateur.id == user.id and trip.etat.id == 1%}
-                    <a href="" class="btn btn-danger" id="annuler">Annuler</a>
+                {% if trip.organisateur.id == user.id %}
+                    {% if trip.etat.id == 1 or trip.etat.id == 2 %}
+                        <a href="{{ path('annuler_sortie', {'id': trip.id}) }}" class="btn btn-danger" id="annuler">Annuler</a>
+                    {% endif %}
                 {% endif %}
             </td>
         </tr>

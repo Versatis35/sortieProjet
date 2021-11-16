@@ -9,6 +9,7 @@
         <div class="col-3">
             <h5>Date du jour : {{ 'now'|date('d - m -Y') }}</h5>
             <h5>Participant : {{ user.prenom }} {{ user.nom }} </h5>
+            <div class="invisible" id="url">{{ app.request.getBaseURL() }}</div>
         </div>
     </div>
     <div class="row">
@@ -56,10 +57,49 @@
         </div>
     </div>
     <hr>
+    <div id="addBlock">
     {{ include('trip/tableTrip.html.twig', {'trips': trips, 'user': user}) }}
+    </div>
     <br>
     <a href="{{ path('creation_sortie') }}" class="btn btn-primary">Créer une sortie</a>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function doFilter() {
+        let datas = new FormData();
+        let site = document.getElementById('site').value;
+        let searchWord = document.getElementById('content').value;
+        let dateStart = document.getElementById('dateStart').value;
+        let dateEnd = document.getElementById('dateEnd').value;
+        let checkOrga = document.getElementById('orga').value;
+        let checkInscrit = document.getElementById('inscrit').value;
+        let checkNot = document.getElementById('notInscrit').value;
+        let checkLast = document.getElementById('last').value;
 
+        datas.set('site',site);
+        datas.set('searchWord',searchWord);
+        datas.set('dateStart',dateStart);
+        datas.set('dateEnd',dateEnd);
+        datas.set('checkOrga',checkOrga);
+        datas.set('checkInscrit',checkInscrit);
+        datas.set('checkNot',checkNot);
+        datas.set('checkLast',checkLast);
+
+        let addBlock = document.getElementById('addBlock');
+        let table = document.getElementById('removeTable');
+        let UrlBase = document.getElementById('url').innerHTML;
+        let url = 'http://localhost' + UrlBase +'/axiosTable/';
+        axios({
+            method: 'post',
+            url: url,
+            data: datas
+        })
+        .then(function (reponse) {
+            console.log(reponse);
+            table.remove();
+            addBlock.innerHTML = response.data;
+        });
+    }
+</script>
 {% endblock %}
