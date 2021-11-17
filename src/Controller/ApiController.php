@@ -7,7 +7,9 @@ use App\Entity\Place;
 use App\Entity\State;
 use App\Entity\User;
 use App\Repository\CityRepository;
+use App\Repository\LocationRepository;
 use App\Repository\PlaceRepository;
+use App\Repository\StateRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -58,6 +60,35 @@ class ApiController extends AbstractController
     }
 
     /**
+     * @Route("/api/createVille", name="api_create_ville" ,methods={"POST"})
+     */
+    public function creerVille(Request $request,EntityManagerInterface $em): Response
+    {
+        $json =$request->getContent();
+        $obj = json_decode($json);
+        $city = new City();
+        $city->setNom($obj->nom);
+        $city->setCodePostal($obj->codePostal);
+        $city->setPays($obj->pays);
+        $em->persist($city);
+        $em->flush();
+        return $this->json($city);
+    }
+
+    /**
+     * @Route("/api/createVille/{nom}", name="api_exist_ville" ,methods={"GET"})
+     */
+    public function isVilleExist($nom,CityRepository $repo): Response
+    {
+        $ville = $repo->findOneBy(['nom'=>$nom]);
+        if($ville === null) {
+            return $this->json(null);
+        } else {
+            return $this->json($ville);
+        }
+    }
+
+    /**
      * @Route("/api/createAdmin", name="api_voir_admin" ,methods={"GET"})
      */
     public function voirAdmin(UserRepository $repo): Response
@@ -68,6 +99,17 @@ class ApiController extends AbstractController
             ]
         );
         return $this->json($user);
+    }
+
+    /**
+     * @Route("/api/getCoordonnees/{id}", name="api_latitude_longitude" ,methods={"GET"})
+     */
+    public function getCoordonnees($id, LocationRepository $repo): Response
+    {
+        $lieu = $repo->findOneBy(['id'=>$id]);
+        $tab["latitude"] = $lieu->getLatitude();
+        $tab["longitude"] = $lieu->getLongitude();
+        return $this->json($tab);
     }
 
     /**

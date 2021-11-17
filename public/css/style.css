@@ -44,3 +44,13 @@ button {
     border: none;
     background-color: transparent;
 }
+
+#map{ /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
+    height:25rem;
+    width:25rem;
+}
+
+#mapadd{ /* la carte DOIT avoir une hauteur sinon elle n'apparaît pas */
+    height:25rem;
+    width:25rem;
+}
