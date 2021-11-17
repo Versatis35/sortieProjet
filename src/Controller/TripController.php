@@ -150,15 +150,20 @@ class TripController extends AbstractController
     /**
      * @Route("/editSortie/{id}", name="edit_sortie")
      */
-    public function modifier(Trip $trip, Request $request, StateRepository $stateRepo, LocationRepository $locRepo): Response
+    public function modifier(Trip $trip, Request $request, StateRepository $stateRepo, CityRepository $repoCity, LocationRepository $locRepo): Response
     {
         $orga = $trip->getOrganisateur()->getSite();
         $location = $trip->getLieu();
+        $latitude = $location->getLatitude();
+        $longitude = $location->getLongitude();
         $city = $location->getVille();
         $authUser = $this->getUser();
 
+        $locForm = new Location();
+        $formLocation = $this->createForm(LocationType::class,$locForm);
         $formTrip = $this->createForm(TripType::class,$trip);
         $formTrip->handleRequest($request);
+        $formLocation->handleRequest($request);
 
         if ($formTrip->isSubmitted()){
             $state = $stateRepo->find($request->get('btn'));
@@ -171,12 +176,31 @@ class TripController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
+        if($formLocation->isSubmitted()) {
+            $em = $this->getDoctrine()->getManager();
+            $locForm->setVille($repoCity->findOneBy(['id'=>$request->request->get("location")['ville']]));
+            $em->persist($locForm);
+            $em->flush();
+            $latitude = $locForm->getLatitude();
+            $longitude = $locForm->getLongitude();
+            $location = $locForm;
+            $locForm = new Location();
+            $formLocation = $this->createForm(LocationType::class, $locForm);
+            $trip->setLieu($location);
+            $formTrip = $this->createForm(TripType::class,$trip);
+        }
+        $error = "";
         return $this->render('trip/creation.html.twig', [
             'trip' => $trip,
             'orga' => $orga,
             'location' => $location,
             'city' => $city,
             'user' => $authUser,
+            'latitude'=> $latitude,
+            'longitude'=> $longitude,
+            'error' => $error,
+            'formLocation' => $formLocation->createView(),
+            'url' =>  $this->getParameter('kernel.project_dir'),
             'formTrip' => $formTrip->createView(),
         ]);
     }
@@ -220,8 +244,7 @@ class TripController extends AbstractController
     public function inscriptionSortie(Trip $trip, StateRepository $stateRepo): Response
     {
         $user = $this->getUser();
-        $trip->addParticipant();
-        $trip->setEtat($user);
+        $trip->addParticipant($user);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($trip);
@@ -236,7 +259,6 @@ class TripController extends AbstractController
     public function desisterSortie(Trip $trip, StateRepository $stateRepo): Response
     {
         $user = $this->getUser();
-        $trip->addParticipant();
         $trip->removeParticipant($user);
 
         $em = $this->getDoctrine()->getManager();
@@ -268,7 +290,7 @@ class TripController extends AbstractController
         $result->leftJoin('o.participants', 'participant');
         $result->leftJoin('o.etat', 'etat');
         $result->leftJoin('o.organisateur', 'organisateur');
-        $result->select(["o.nom","o.dateSortie","o.dateLimite","etat.libelle","o.nbPlace","COUNT(participant.id) AS nb_participants","organisateur.pseudo as Organisateur"]);
+        $result->select(["o.id","o.nom","o.dateSortie","o.dateLimite","etat.libelle","o.nbPlace","COUNT(participant.id) AS nb_participants","organisateur.pseudo as Organisateur"]);
         $result->groupBy('o.id');
         $json =$request->getContent();
         $obj = json_decode($json);
@@ -330,7 +352,7 @@ class TripController extends AbstractController
                 $result->andWhere("o.organisateur = :organisateur");
                 $result->setParameter("organisateur", $userActual);
             } else {
-                $result->where("o.organisateur <= :organisateur");
+                $result->where("o.organisateur = :organisateur");
                 $result->setParameter("organisateur", $userActual);
                 $firstWhereSet = true;
             }
@@ -357,19 +379,63 @@ class TripController extends AbstractController
                 $firstWhereSet = true;
             }
         }
-        $dateNow = getdate()["year"] . "/" . getdate()["mon"] ."/". getdate()["mday"];
+        $dateNow =  new \DateTime;
         if($checkLast == true) {
             if($firstWhereSet) {
-                $result->andWhere("o.dateLimite < :dateJour");
+                $result->andWhere("o.dateSortie < :dateJour");
                 $result->setParameter("dateJour", $dateNow);
             } else {
-                $result->where("o.dateLimite < :dateJour");
+                $result->where("o.dateSortie < :dateJour");
                 $result->setParameter("dateJour", $dateNow);
                 $firstWhereSet = true;
             }
         }
-
         $tabTrip = $result->getQuery()->getResult();
+        foreach($tabTrip as $key => $trip) {
+
+            $tripSearch = $tripRepo->findOneBy(["id"=>$trip["id"]]);
+            $trip["detailSortie"] = true;
+
+            if($trip["Organisateur"] == $userActual->getPseudo() && $trip["libelle"] == "Créée") {
+                $trip["editSortie"] = true;
+                $trip["publierSortie"] = true;
+            } else {
+                $trip["editSortie"] = false;
+                $trip["publierSortie"] = false;
+            }
+
+            if($trip["Organisateur"] != $userActual->getPseudo() && !in_array($userActual, $tripSearch->getParticipants()->toArray())) {
+                if($trip["libelle"] == "Ouverte" || $trip["libelle"] == "Activité en cours") {
+                    $trip["inscription"] = true;
+                } else {
+                    $trip["inscription"] = false;
+                }
+            } else {
+                $trip["inscription"] = false;
+            }
+
+            if($trip["Organisateur"] != $userActual->getPseudo() && in_array($userActual, $tripSearch->getParticipants()->toArray())) {
+                if($trip["libelle"] == "Ouverte" || $trip["libelle"] == "Activité en cours") {
+                    $trip["desistement"] = true;
+                } else {
+                    $trip["desistement"] = false;
+                }
+            } else {
+                $trip["desistement"] = false;
+            }
+
+            if($trip["Organisateur"] == $userActual->getPseudo()) {
+                if($trip["libelle"] == "Créée" || $trip["libelle"] == "Ouverte") {
+                    $trip["annulerSortie"] = true;
+                } else {
+                    $trip["annulerSortie"] = false;
+                }
+            } else {
+                $trip["annulerSortie"] = false;
+            }
+
+            $tabTrip[$key] = $trip;
+        }
 
         return $this->json($tabTrip);
     }
