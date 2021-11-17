@@ -79,4 +79,25 @@ class PlaceController extends AbstractController
             'id' => $id
         ]);
     }
+
+    /**
+     * @Route("/site/filtre", name="filtre_site", methods={"POST"})
+     */
+    public function filterPlace(Request $request, PlaceRepository $placeRepo): Response
+    {
+        $result = $placeRepo->createQueryBuilder('p');
+        $json = $request->getContent();
+        $obj = json_decode($json);
+        $searchWord = $obj->searchWord;
+
+        if($searchWord !== "")
+        {
+            $result->where("p.nom LIKE :nom");
+            $result->setParameter("nom", "%".$searchWord."%");
+        }
+
+        $result->getQuery()->getResult();
+
+        return $this->json($result);
+    }
 }
