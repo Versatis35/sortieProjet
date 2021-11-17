@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Gestion des utilisateurs {% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <h2 class="text-center">Gestion des utilisateurs</h2>
+        <hr><br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Pseudo</th>
+                <th scope="col">Prenom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Site</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody id="tBody">
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.pseudo }}</td>
+                    <td>{{ user.prenom }}</td>
+                    <td>{{ user.nom }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.site.nom }}</td>
+                    <td>
+                        <a href="" class="btn btn-primary">Modifier</a>
+                        {% if user.active %}
+                            <a href="{{ path('desactiver_utilisateur', {id: user.id}) }}" class="btn btn-warning">Désactiver</a>
+                        {% else  %}
+                            <a href="{{ path('activer_utilisateur', {id: user.id}) }}" class="btn btn-warning">Activer</a>
+                        {% endif %}
+                        <a href="{{ path('supprimer_utilisateur', {id: user.id}) }}" class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
