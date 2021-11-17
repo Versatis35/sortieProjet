@@ -63,6 +63,15 @@
     </nav>
     <!-- END NAVBAR -->
 
+    {# Lis et renvoit tous les messages flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <section class="container px-5">
         {% block body %}
         {% endblock %}

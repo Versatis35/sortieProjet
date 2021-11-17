@@ -45,6 +45,7 @@
         </tr>
     </template>
 
+    <!-- Import Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         let UrlBase = document.getElementById('url').innerHTML;
@@ -54,13 +55,15 @@
         {
             let searchWord = document.getElementById('searchWord').value;
             let url = 'http://localhost' + UrlBase +'/site/filtre';
-            axios.post(url,{searchWord:searchWord}).then(function (response) {
+            axios.post(url,{searchWord:searchWord}).then(function (response)
+            {
                 let tableau = response.data;
                 console.log(tableau);
                 let tbody = document.querySelector('#tBody');
                 tbody.innerHTML = "";
                 let template = document.querySelector('#lineData');
-                for( let site of tableau) {
+                for( let site of tableau)
+                {
                     let clone = template.content.cloneNode(true);
                     // je met le clone a l'intérieur du tbody
 
@@ -68,6 +71,7 @@
                     let td = clone.querySelectorAll("td");
                     td[0].innerHTML = site.nom;
 
+                    // Récupère
                     let btnMofidy = clone.querySelector('#btnModify');
                     btnMofidy.setAttribute("data-id", site.id);
 

@@ -39,6 +39,7 @@ class PlaceController extends AbstractController
         {
             $em->persist($namePlace);
             $em->flush();
+            $this->addFlash('success', 'Site "'.$namePlace->getNom() .'" ajouté avec succès !');
             return $this->redirectToRoute('gerer_site');
         }
 
@@ -56,6 +57,7 @@ class PlaceController extends AbstractController
         $identifiant = $em->getRepository(Place::class)->find($id);
         $em->remove($identifiant);
         $em->flush();
+        $this->addFlash("success", 'Site supprimé avec succès !');
         return $this->redirectToRoute('gerer_site');
     }
 
@@ -71,6 +73,7 @@ class PlaceController extends AbstractController
         if ($modifySiteForm->isSubmitted())
         {
             $em->flush();
+            $this->addFlash('success', 'Site modifié avec succès !');
             return $this->redirectToRoute('gerer_site');
         }
 
@@ -85,20 +88,33 @@ class PlaceController extends AbstractController
      */
     public function filterPlace(Request $request, PlaceRepository $placeRepo): Response
     {
+        // Requête pour récupérer les données nécessaires
         $result = $placeRepo->createQueryBuilder('p');
+
+        // Le json récupère le résultat de la requête
         $result->select(["p.id","p.nom"]);
+
+        // Le json récupère le résultat de la requête
         $json = $request->getContent();
+
+        // Récupère la chaine encodée en JSON et la convertit en variable PHP que l'on stocke dans la variable $obj
         $obj = json_decode($json);
+
+        // La variable $searchWord récupère le résultat du JSON
         $searchWord = $obj->searchWord;
 
+        // Si le résultat n'est pas vide
         if($searchWord !== "")
         {
+            // On récupère la/les valeurs
             $result->where("p.nom LIKE :nom");
             $result->setParameter("nom", "%".$searchWord."%");
         }
 
-        $tabSite = $result->getQuery()->getResult();
+        // $tabCity contient le résultat (la/les valeurs)
+        $tabPlace = $result->getQuery()->getResult();
 
-        return $this->json($tabSite);
+        // Retourne le résultat
+        return $this->json($tabPlace);
     }
 }

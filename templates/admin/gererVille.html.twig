@@ -7,12 +7,13 @@
     <div class="container">
         <br><h1 style="text-align: center">Gérer les villes</h1><hr>
     </div><br>
+    <div class="invisible" id="url">{{ app.request.getBaseUrl() }}</div>
 
     <h3>Filtrer les villes</h3>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="ex : ENI" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input type="text" id="searchWord" class="form-control" placeholder="ex : Nantes" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="button">Rechercher</button>
+            <button class="btn btn-outline-primary" onclick="chargerVille()" type="button">Rechercher</button>
         </div>
     </div>
 
@@ -24,15 +25,8 @@
             <th scope="col">Actions</th>
         </tr>
         </thead>
-        <tbody>
-            {% for c in city %}
-                <tr>
-                    <td> {{ c.nom }}</td>
-                    <td> {{ c.codePostal }}</td>
-                    <!--<td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><a href="{{ path('delete_city', {id:c.id}) }}" role="button" id="btnDeleteVille" class="btn btn-danger">Supprimer</a></td>-->
-                    <td><a href="{{ path('modify_city', {id:c.id}) }}" role="button" id="btnModify" class="btn btn-info">Modifier</a> <a href="{{ path('delete_city', {id:c.id}) }}" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>
-                </tr>
-            {% endfor %}
+        <tbody id="tBody">
+
         </tbody>
     </table>
 
@@ -40,5 +34,87 @@
     <div>
         {{ form(addCityForm) }}
     </div>
+
+    <template id="lineData">
+        <tr>
+            <td> </td>
+            <td> </td>
+            <td>
+                <button onclick="modifier(this)" role="button" id="btnModify" class="btn btn-info">Modifier</button>
+                <button onclick="supprimer(this)" role="button" id="btnDelete" class="btn btn-danger">Supprimer</button>
+            </td>
+        </tr>
+    </template>
+
+
+    <!-- Import Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Start JS -->
+    <script>
+
+        let UrlBase = document.getElementById('url').innerHTML;
+
+        <!-- Appel de la function au chargement de la page -->
+        chargerVille();
+
+        <!-- Charge dynamiquement le tableau des villes -->
+        function chargerVille()
+        {
+            // Récupère la valeur de la textBox du filtre
+            let searchWord = document.getElementById('searchWord').value;
+
+            // Récupère l'utr complet
+            let url = 'http://localhost' + UrlBase + '/ville/filtre';
+
+            // On fait appel à de l'axios en faisant passé l'url et le contenu de la textBox du filtre
+            axios.post(url,{searchWord}).then(function (response)
+            {
+                let tableau = response.data;
+
+                // Permettra d'alimenter la balise <tbody> de la page
+                let tbody = document.querySelector('#tBody');
+
+                // On inialise la variable à vide pour le chargement de la page
+                tbody.innerHTML = "";
+
+                // Permettra d'alimenter chaque ligne du tableau
+                let template = document.querySelector('#lineData');
+
+                for(let ville of tableau)
+                {
+                    // Permet de cloner et injecter dans le tbody
+                    let clone = template.content.cloneNode(true);
+
+                    // Tableau pour les <td>
+                    let td = clone.querySelectorAll("td");
+                    td[0].innerHTML = ville.nom;
+                    td[1].innerHTML = ville.codePostal;
+
+                    // Récupère les valeurs grâce à l'id
+                    let btnModify = clone.querySelector('#btnModify');
+                    btnModify.setAttribute("data-id", ville.id);
+
+                    // Récupère les valeurs grâce à l'id
+                    let btnDelete = clone.querySelector('#btnDelete');
+                    btnDelete.setAttribute("data-id", ville.id);
+
+                    tbody.appendChild(clone);
+                }
+            });
+        }
+
+        function modifier(btnModify)
+        {
+            let id = btnModify.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/admin/ville/modify/' + id;
+        }
+
+        function supprimer(btnModify)
+        {
+            let id = btnModify.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/admin/ville/gerer/' + id;
+        }
+
+    </script>
 
 {% endblock %}

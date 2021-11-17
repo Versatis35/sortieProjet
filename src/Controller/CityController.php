@@ -37,6 +37,7 @@ class CityController extends AbstractController
         {
             $em->persist($city);
             $em->flush();
+            $this->addFlash('success', 'Ville "'. $city->getNom() .'" ajoutée avec succès !');
             return $this->redirectToRoute('gerer_ville');
         }
 
@@ -54,6 +55,7 @@ class CityController extends AbstractController
         $identifiant = $em->getRepository(City::class)->find($id);
         $em->remove($identifiant);
         $em->flush();
+        $this->addFlash('success', 'Site supprimé avec succès !');
         return $this->redirectToRoute('gerer_ville');
     }
 
@@ -62,6 +64,7 @@ class CityController extends AbstractController
      */
     public function modifyCity(EntityManagerInterface $em, int $id, Request $request)
     {
+        $class = $em->getRepository(City::class);
         $identifiant = $em->getRepository(City::class)->find($id);
         $modifyCityForm = $this->createForm(ModifyCityType::class, $identifiant);
         $modifyCityForm->handleRequest($request);
@@ -69,6 +72,7 @@ class CityController extends AbstractController
         if($modifyCityForm->isSubmitted())
         {
             $em->flush();
+            $this->addFlash('success', 'Site modifié avec succès !');
             return $this->redirectToRoute('gerer_ville');
         }
 
@@ -76,6 +80,40 @@ class CityController extends AbstractController
             'modifyCityForm' => $modifyCityForm->createView(),
             'id' => $id
         ]);
+    }
+
+    /**
+     * @Route("/ville/filtre", name="filtre_ville", methods={"POST"})
+     */
+    public function filterCity(Request $request, CityRepository $cityRepo): Response
+    {
+        // Requête pour récupérer les données nécessaires
+        $result = $cityRepo->createQueryBuilder('c');
+        $result->select(["c.id","c.nom", "c.codePostal", "c.pays"]);
+
+        // Le json récupère le résultat de la requête
+        $json = $request->getContent();
+
+        // Récupère la chaine encodée en JSON et la convertit en variable PHP que l'on stocke dans la variable $obj
+        $obj = json_decode($json);
+
+        // La variable $searchWord récupère le résultat du JSON
+        $searchWord = $obj->searchWord;
+
+        // Si le résultat n'est pas vide
+        if($searchWord != "")
+        {
+            // On récupère la/les valeurs
+            $result->where("c.nom LIKE :nom");
+            $result->orWhere("c.codePostal LIKE :nom");
+            $result->setParameter("nom", "%".$searchWord."%");
+        }
+
+        // $tabCity contient le résultat (la/les valeurs)
+        $tabCity = $result->getQuery()->getResult();
+
+        // Retourne le résultat
+        return $this->json($tabCity);
     }
 
 }
