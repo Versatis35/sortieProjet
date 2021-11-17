@@ -25,27 +25,20 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Rennes</td>
-            <td>35000</td>
-            <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
-        </tr>
-        <tr>
-            <td>Nantes</td>
-            <td>44000</td>
-            <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
-        </tr>
-        <tr>
-            <td>Quimper</td>
-            <td>29000</td>
-            <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
-        </tr>
-        <tr>
-            <td>   </td>
-            <td>   </td>
-            <td><button type="button" class="btn btn-success" style="margin-right: 5px">Ajouter</button></td>
-        </tr>
+            {% for c in city %}
+                <tr>
+                    <td> {{ c.nom }}</td>
+                    <td> {{ c.codePostal }}</td>
+                    <!--<td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><a href="{{ path('delete_city', {id:c.id}) }}" role="button" id="btnDeleteVille" class="btn btn-danger">Supprimer</a></td>-->
+                    <td><a href="{{ path('modify_city', {id:c.id}) }}" role="button" id="btnModify" class="btn btn-info">Modifier</a> <a href="{{ path('delete_city', {id:c.id}) }}" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
+
+    <br><h3>Ajouter une ville</h3>
+    <div>
+        {{ form(addCityForm) }}
+    </div>
 
 {% endblock %}

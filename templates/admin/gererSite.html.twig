@@ -24,27 +24,20 @@
             </tr>
         </thead>
         <tbody>
+        {% for place in places %}
             <tr>
-                <td>ENI Saint-Herblain</td>
-                <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
+                <td> {{ place.nom }}</td>
+                <!--<td><button id="btnModifier" class="btn btn-info">Modifier</button> <a href="{{ path('delete_site', {id:place.id}) }}" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>-->
+                <td><a href="{{ path('modify_site', {id:place.id}) }}" role="button" id="btnModify" class="btn btn-info">Modifier</a> <a href="{{ path('delete_site', {id:place.id}) }}" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>
             </tr>
-            <tr>
-                <td>ENI Niort</td>
-                <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
-            </tr>
-            <tr>
-                <td>ENI Quimper</td>
-                <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
-            </tr>
-            <tr>
-                <td> ENI Rennes </td>
-                <td><button type="button" class="btn btn-primary" style="margin-right: 5px">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button></td>
-            </tr>
-            <tr>
-                <td>   </td>
-                <td><button type="button" class="btn btn-success" style="margin-right: 5px">Ajouter</button></td>
-            </tr>
+        {% endfor %}
         </tbody>
     </table>
 
+    <br><h3>Ajouter un site</h3>
+    <div>
+        {{ form(addPlaceForm) }}
+    </div>
+
 {% endblock %}
+

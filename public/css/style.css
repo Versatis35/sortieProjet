@@ -1,7 +1,7 @@
 .logo {
-    filter: invert(100%) sepia(14%) saturate(2%) hue-rotate(354deg) brightness(110%) contrast(101%);
-    margin-right: 10px;
-    width: 40px;
+    /*filter: invert(100%) sepia(14%) saturate(2%) hue-rotate(354deg) brightness(110%) contrast(101%);*/
+    margin-right: 100px;
+    width: 100px;
 }
 footer{
     background:#ccc;

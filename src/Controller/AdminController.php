@@ -108,19 +108,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/site/gerer", name="gerer_site")
-     */
-    public function gererSite()
-    {
-        return $this->render('admin/gererSite.html.twig');
-    }
 
-    /**
-     * @Route("/ville/gerer", name="gerer_ville")
-     */
-    public function gererVille()
-    {
-        return $this->render('admin/gererVille.html.twig');
-    }
+
+
 }
