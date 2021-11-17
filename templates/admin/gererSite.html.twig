@@ -39,5 +39,34 @@
         {{ form(addPlaceForm) }}
     </div>
 
+    <template id="lineData">
+        {% for place in places %}
+            <tr>
+                <td> </td>
+                <!--<td><button id="btnModifier" class="btn btn-info">Modifier</button> <a href="" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>-->
+                <td><button onclick=" " role="button" id="btnModify" class="btn btn-info">Modifier</button> <button onclick=" " role="button" id="btnDelete" class="btn btn-danger">Supprimer</button></td>
+            </tr>
+        {% endfor %}
+    </template>
+
+    <script>
+
+        function chargerSite()
+        {
+
+        }
+
+        function modifier()
+        {
+
+        }
+
+        function supprimer()
+        {
+
+        }
+
+    </script>
+
 {% endblock %}
 
