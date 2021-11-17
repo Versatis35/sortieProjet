@@ -151,8 +151,14 @@
             td[2].innerHTML = formatDate(sortie.dateLimite);
             td[3].innerHTML = sortie.nb_participants +"/"+ sortie.nbPlace;
             td[4].innerHTML = sortie.libelle;
-            td[5].innerHTML = "";
-            td[6].innerHTML = sortie.Organisateur;
+            if(sortie.isInscrit == true) {
+                td[5].innerHTML = "X";
+            } else {
+                td[5].innerHTML = "";
+            }
+            url = 'http://localhost' + UrlBase +'/profil/' + sortie.idOrganisateur;
+            td[6].innerHTML = "<a href="+url+">"+sortie.Organisateur+"</a>";
+
             let btnDetail = clone.querySelector('#afficher');
             if(sortie.detailSortie == true) {
                 btnDetail.setAttribute("data-id", sortie.id);

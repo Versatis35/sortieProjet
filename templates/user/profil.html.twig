@@ -44,6 +44,7 @@
                 <p class="col">{{ user.site }}
             </div>
         </div>
+        {% if user == userActual or is_granted('ROLE_ADMIN') %}
         <div class="row mx-1">
             <div class="col-4">
                 <a href="{{ path('modification_mon_profil') }}">
@@ -53,5 +54,6 @@
                 </a>
             </div>
         </div>
+        {% endif %}
     </div><br>
 {% endblock %}

@@ -394,6 +394,7 @@ class TripController extends AbstractController
         foreach($tabTrip as $key => $trip) {
 
             $tripSearch = $tripRepo->findOneBy(["id"=>$trip["id"]]);
+            $trip["idOrganisateur"] = $tripSearch->getOrganisateur()->getId();
             $trip["detailSortie"] = true;
 
             if($trip["Organisateur"] == $userActual->getPseudo() && $trip["libelle"] == "Créée") {
@@ -420,8 +421,10 @@ class TripController extends AbstractController
                 } else {
                     $trip["desistement"] = false;
                 }
+                $trip["isInscrit"] = true;
             } else {
                 $trip["desistement"] = false;
+                $trip["isInscrit"] = false;
             }
 
             if($trip["Organisateur"] == $userActual->getPseudo()) {
