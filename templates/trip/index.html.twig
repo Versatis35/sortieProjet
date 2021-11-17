@@ -83,7 +83,7 @@
             </td>
         </tr>
     </template>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     let UrlBase = document.getElementById('url').innerHTML;
     let url = 'http://localhost' + UrlBase +'/axiosTable/';
@@ -201,32 +201,32 @@
 
     function detailSortie(btnDetail) {
         let id = btnDetail.getAttribute('data-id');
-        window.document.location = url = 'http://localhost' + UrlBase +'/detailSortie/' + id;
+        window.document.location = 'http://localhost' + UrlBase +'/detailSortie/' + id;
     }
 
     function editSortie(btnEdit) {
         let id = btnEdit.getAttribute('data-id');
-        window.document.location = url = 'http://localhost' + UrlBase +'/editSortie/' + id;
+        window.document.location = 'http://localhost' + UrlBase +'/editSortie/' + id;
     }
 
     function publierSortie(btnPublier) {
         let id = btnPublier.getAttribute('data-id');
-        window.document.location = url = 'http://localhost' + UrlBase +'/publierSortie/' + id;
+        window.document.location = 'http://localhost' + UrlBase +'/publierSortie/' + id;
     }
 
     function inscriptionSortie(btnInscrire) {
         let id = btnInscrire.getAttribute('data-id');
-        window.document.location = url = 'http://localhost' + UrlBase +'/inscriptionSortie/' + id;
+        window.document.location = 'http://localhost' + UrlBase +'/inscriptionSortie/' + id;
     }
 
     function desisterSortie(btnDesister) {
         let id = btnDesister.getAttribute('data-id');
-        window.document.location = url = 'http://localhost' + UrlBase +'/desistement/' + id;
+        window.document.location = 'http://localhost' + UrlBase +'/desistement/' + id;
     }
 
     function annulerSortie(btnAnnuler) {
         let id = btnAnnuler.getAttribute('data-id');
-        window.document.location = url = 'http://localhost' + UrlBase +'/annulation/' + id;
+        window.document.location = 'http://localhost' + UrlBase +'/annulation/' + id;
     }
 
     axios.post(url,{

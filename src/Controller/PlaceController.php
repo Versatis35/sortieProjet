@@ -86,7 +86,7 @@ class PlaceController extends AbstractController
     public function filterPlace(Request $request, PlaceRepository $placeRepo): Response
     {
         $result = $placeRepo->createQueryBuilder('p');
-        $result->select(["p.nom"]);
+        $result->select(["p.id","p.nom"]);
         $json = $request->getContent();
         $obj = json_decode($json);
         $searchWord = $obj->searchWord;

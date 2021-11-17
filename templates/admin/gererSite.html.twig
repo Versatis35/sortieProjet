@@ -7,12 +7,13 @@
     <div class="container">
         <br><h1 style="text-align: center">Gérer les sites</h1><hr>
     </div><br>
+    <div class="invisible" id="url">{{ app.request.getBaseURL() }}</div>
 
     <h3>Filtrer les sites</h3>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="ex : ENI" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input type="text" id="searchWord" class="form-control" placeholder="ex : ENI" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="button">Rechercher</button>
+            <button class="btn btn-outline-primary" onclick="chargerSite()" type="button">Rechercher</button>
         </div>
     </div>
 
@@ -23,14 +24,8 @@
                 <th scope="col">Actions</th>
             </tr>
         </thead>
-        <tbody>
-        {% for place in places %}
-            <tr>
-                <td> {{ place.nom }}</td>
-                <!--<td><button id="btnModifier" class="btn btn-info">Modifier</button> <a href="{{ path('delete_site', {id:place.id}) }}" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>-->
-                <td><a href="{{ path('modify_site', {id:place.id}) }}" role="button" id="btnModify" class="btn btn-info">Modifier</a> <a href="{{ path('delete_site', {id:place.id}) }}" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>
-            </tr>
-        {% endfor %}
+        <tbody id="tBody">
+
         </tbody>
     </table>
 
@@ -40,30 +35,59 @@
     </div>
 
     <template id="lineData">
-        {% for place in places %}
-            <tr>
-                <td> </td>
-                <!--<td><button id="btnModifier" class="btn btn-info">Modifier</button> <a href="" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>-->
-                <td><button onclick=" " role="button" id="btnModify" class="btn btn-info">Modifier</button> <button onclick=" " role="button" id="btnDelete" class="btn btn-danger">Supprimer</button></td>
-            </tr>
-        {% endfor %}
+        <tr>
+            <td> </td>
+            <!--<td><button id="btnModifier" class="btn btn-info">Modifier</button> <a href="" role="button" id="btnDelete" class="btn btn-danger">Supprimer</a></td>-->
+            <td>
+                <button onclick="modifier(this)" role="button" id="btnModify" class="btn btn-info">Modifier</button>
+                <button onclick="supprimer(this)" role="button" id="btnDelete" class="btn btn-danger">Supprimer</button>
+            </td>
+        </tr>
     </template>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        let UrlBase = document.getElementById('url').innerHTML;
+        chargerSite();
 
         function chargerSite()
         {
+            let searchWord = document.getElementById('searchWord').value;
+            let url = 'http://localhost' + UrlBase +'/site/filtre';
+            axios.post(url,{searchWord:searchWord}).then(function (response) {
+                let tableau = response.data;
+                console.log(tableau);
+                let tbody = document.querySelector('#tBody');
+                tbody.innerHTML = "";
+                let template = document.querySelector('#lineData');
+                for( let site of tableau) {
+                    let clone = template.content.cloneNode(true);
+                    // je met le clone a l'intérieur du tbody
 
+                    //  un tableau de selecteur td
+                    let td = clone.querySelectorAll("td");
+                    td[0].innerHTML = site.nom;
+
+                    let btnMofidy = clone.querySelector('#btnModify');
+                    btnMofidy.setAttribute("data-id", site.id);
+
+                    let btnSupprimer = clone.querySelector('#btnDelete');
+                    btnSupprimer.setAttribute("data-id", site.id);
+                    tbody.appendChild(clone);
+                }
+            });
         }
 
-        function modifier()
+        function modifier(btnModify)
         {
-
+            let id = btnModify.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/admin/site/modify/' + id;
         }
 
-        function supprimer()
+        function supprimer(btnDelete)
         {
-
+            let id = btnDelete.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/admin/site/gerer/' + id;
         }
 
     </script>
