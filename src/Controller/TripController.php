@@ -121,6 +121,7 @@ class TripController extends AbstractController
         $em->persist($trip);
         $em->flush();
 
+        $this->addFlash('success', "La sortie a été publié avec succès");
         return $this->redirectToRoute('home');
     }
 
@@ -173,6 +174,7 @@ class TripController extends AbstractController
             //$em->persist($trip);
             $em->flush();
 
+            $this->addFlash('success', "La sortie a été modifié avec succès");
             return $this->redirectToRoute('home');
         }
 
@@ -235,6 +237,7 @@ class TripController extends AbstractController
         $em->persist($trip);
         $em->flush();
 
+        $this->addFlash('success', "La sortie a été annulé avec succès");
         return $this->redirectToRoute('home');
     }
 
@@ -250,6 +253,7 @@ class TripController extends AbstractController
         $em->persist($trip);
         $em->flush();
 
+        $this->addFlash('success', "Vous ètes inscrit a la sortie");
         return $this->redirectToRoute('home');
     }
 
@@ -265,6 +269,7 @@ class TripController extends AbstractController
         $em->persist($trip);
         $em->flush();
 
+        $this->addFlash('success', "Vous ètes désinscrit de la sortie");
         return $this->redirectToRoute('home');
     }
 

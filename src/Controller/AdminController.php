@@ -103,6 +103,7 @@ class AdminController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
+            $this->addFlash('success', "L'utilisateur a été créé avec succès");
             return $this->redirectToRoute('home');
         }
 
@@ -138,6 +139,7 @@ class AdminController extends AbstractController
         $em->persist($user);
         $em->flush();
 
+        $this->addFlash('success', "L'utilisateur est désactivé avec succès");
         return $this->redirectToRoute('gestion_utilisateur');
     }
 
@@ -155,6 +157,7 @@ class AdminController extends AbstractController
         $em->persist($user);
         $em->flush();
 
+        $this->addFlash('success', "L'utilisateur est activé avec succès");
         return $this->redirectToRoute('gestion_utilisateur');
     }
 
@@ -171,6 +174,7 @@ class AdminController extends AbstractController
         $em->remove($user);
         $em->flush();
 
+        $this->addFlash('success', "L'utilisateur est supprimé avec succès");
         return $this->redirectToRoute('gestion_utilisateur');
     }
 
