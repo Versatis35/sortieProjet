@@ -3,247 +3,265 @@
 {%  block title %} Accueil {%  endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-9"></div>
-        <div class="col-3">
-            <h5>Date du jour : {{ 'now'|date('d - m -Y') }}</h5>
-            <h5>Participant : {{ user.prenom }} {{ user.nom }} </h5>
-            <div class="invisible" id="url">{{ app.request.getBaseURL() }}</div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-5">
-            <h6>Filtrer les sorties</h6>
-            <label for="site">Site : </label>
-            <select class="form-control" id="site" name="site">
-                <option value="0">Tous les sites</option>
-                {% for place in places %}
-                    <option value="{{ place.id }}">{{ place.nom }}</option>
-                {% endfor %}
-            </select>
-            <label for="content">Le nom de la sortie contient : </label>
-            <input class="form-control" type="search" name="content" id="content">
-            <div class="row">
-                <div class="col-6">
-                    <label for="dateStart">Entre </label>
-                    <input class="form-control" type="date" id="dateStart" name="dateStart">
-                </div>
-                <div class="col-6">
-                    <label for="dateEnd"> et </label>
-                    <input class="form-control" type="date" id="dateEnd" name="dateEnd">
+
+    <!-- start Front -->
+    <br><h3 style="text-align: center">Accueil</h3><hr>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-9"></div>
+            <div class="col-3">
+                <div class="bg-light border mt-2" style="text-align: center; border-radius: 10px">
+                    <h6>Date du jour : {{ 'now'|date('d/m/Y') }}</h6>
+                    <h6>Participant : {{ user.prenom }} {{ user.nom }} </h6>
+                    <div class="invisible" id="url">{{ app.request.getBaseURL() }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-4 mt-3">
-            <div class="form-check border border-dark mt-5">
-                <label for="orga" class="form-check-label">Sorties dont je suis l'organisateur/trice</label>
-                <input type="checkbox" class="form-check-input" name="orga" id="orga">
-
-                <label for="inscrit" class="form-check-label">Sorties auxquelles je suis inscrit/e</label>
-                <input type="checkbox" class="form-check-input" name="inscrit" id="inscrit">
-
-                <label for="notInscrit" class="form-check-label">Sorties auxquelles je ne suis pas inscrit/e</label>
-                <input type="checkbox" class="form-check-input" name="notInscrit" id="notInscrit">
-
-                <label for="last" class="form-check-label">Sorties passées</label>
-                <input type="checkbox" class="form-check-input" name="last" id="last">
+        <div class="form-group">
+            <div class="col-5">
+                <h4>Filtrer les sorties</h4><br>
+                <label for="site">Site</label>
+                <select class="form-control" id="site" name="site">
+                    <option value="0">Tous les sites</option>
+                    {% for place in places %}
+                        <option value="{{ place.id }}">{{ place.nom }}</option>
+                    {% endfor %}
+                </select><br>
+                <label for="content">Le nom de la sortie contient</label>
+                <input class="form-control" type="search" name="content" id="content"><br>
+                <div class="row">
+                    <div class="col-6">
+                        <label for="dateStart">Entre </label>
+                        <input class="form-control" type="date" id="dateStart" name="dateStart">
+                    </div>
+                    <div class="col-6">
+                        <label for="dateEnd"> Et </label>
+                        <input class="form-control" type="date" id="dateEnd" name="dateEnd">
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-3">
-            <div class="d-grid gap-2 mt-5">
-                <button class="btn btn-primary mt-5" onclick="doFilter()" type="submit">Rechercher</button>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <div id="addBlock">
-    {{ include('trip/tableTrip.html.twig', {'trips': trips, 'user': user}) }}
-    </div>
-    <br>
-    <a href="{{ path('creation_sortie') }}" class="btn btn-primary">Créer une sortie</a>
+            <div class="col-4 mt-3" style="margin-left: 20px">
+                <div class="form-check border border-dark mt-5" style="text-align: left; border-radius: 10px;">
+                    <label for="orga" class="form-check-label">Sorties dont je suis l'organisateur/trice</label>
+                    <input type="checkbox" class="form-check-input" name="orga" id="orga">
 
-</div>
-    <template id="ligne">
-        <tr>
-            <td> </td>
-            <td> </td>
-            <td> </td>
-            <td> </td>
-            <td> </td>
-            <td> </td>
-            <td> </td>
-            <td>
-                <button onclick="detailSortie(this)" class="btn btn-primary" id="afficher">Afficher</button>
-                <button onclick="editSortie(this)" class="btn btn-primary" id="modifier">Modifier</button>
-                <button onclick="publierSortie(this)" class="btn btn-success" id="publier">Publier</button>
-                <button onclick="inscriptionSortie(this)" class="btn btn-success" id="inscrire">S'inscrire</button>
-                <button onclick="desisterSortie(this)" class="btn btn-danger" id="desister">Se desister</button>
-                <button onclick="annulerSortie(this)" class="btn btn-danger" id="annuler">Annuler</button>
-            </td>
-        </tr>
-    </template>
+                    <label for="inscrit" class="form-check-label">Sorties auxquelles je suis inscrit/e</label>
+                    <input type="checkbox" class="form-check-input" name="inscrit" id="inscrit">
+
+                    <label for="notInscrit" class="form-check-label">Sorties auxquelles je ne suis pas inscrit/e</label>
+                    <input type="checkbox" class="form-check-input" name="notInscrit" id="notInscrit">
+
+                    <label for="last" class="form-check-label">Sorties passées</label>
+                    <input type="checkbox" class="form-check-input" name="last" id="last">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group">
+                    <button class="btn btn-primary mt-5" onclick="doFilter()" type="submit">Rechercher</button>
+                </div>
+            </div>
+        </div><hr>
+        <br><h4>Liste des sorties</h4><br>
+
+        <div id="addBlock">
+        {{ include('trip/tableTrip.html.twig', {'trips': trips, 'user': user}) }}
+        </div>
+        <br>
+        <a href="{{ path('creation_sortie') }}" class="btn btn-primary" style="margin-bottom: 15px">Créer une sortie</a>
+
+    </div>
+        <template id="ligne">
+            <tr>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td>
+                    <button onclick="detailSortie(this)" class="btn btn-primary" id="afficher">Afficher</button>
+                    <button onclick="editSortie(this)" class="btn btn-primary" id="modifier">Modifier</button>
+                    <button onclick="publierSortie(this)" class="btn btn-success" id="publier">Publier</button>
+                    <button onclick="inscriptionSortie(this)" class="btn btn-success" id="inscrire">S'inscrire</button>
+                    <button onclick="desisterSortie(this)" class="btn btn-danger" id="desister">Se desister</button>
+                    <button onclick="annulerSortie(this)" class="btn btn-danger" id="annuler">Annuler</button>
+                </td>
+            </tr>
+        </template>
+    <!-- End front -->
+
+    <!-- start JS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-    let UrlBase = document.getElementById('url').innerHTML;
-    let url = 'http://localhost' + UrlBase +'/axiosTable/';
+    <script>
+        let UrlBase = document.getElementById('url').innerHTML;
+        let url = 'http://localhost' + UrlBase +'/axiosTable/';
 
-    function doFilter() {
-        let site = document.getElementById('site').value;
-        let searchWord = document.getElementById('content').value;
-        let dateStart = document.getElementById('dateStart').value;
-        let dateEnd = document.getElementById('dateEnd').value;
-        let checkOrga = document.getElementById('orga').checked;
-        let checkInscrit = document.getElementById('inscrit').checked;
-        let checkNot = document.getElementById('notInscrit').checked;
-        let checkLast = document.getElementById('last').checked;
-        if(searchWord === undefined) searchWord = "";
-        if(dateStart === undefined) dateStart = "";
-        if(dateEnd === undefined) dateEnd = "";
-        let addBlock = document.getElementById('addBlock');
-        let table = document.getElementById('removeTable');
-        UrlBase = document.getElementById('url').innerHTML;
-        url = 'http://localhost' + UrlBase +'/axiosTable/';
+        function doFilter()
+        {
+            let site = document.getElementById('site').value;
+            let searchWord = document.getElementById('content').value;
+            let dateStart = document.getElementById('dateStart').value;
+            let dateEnd = document.getElementById('dateEnd').value;
+            let checkOrga = document.getElementById('orga').checked;
+            let checkInscrit = document.getElementById('inscrit').checked;
+            let checkNot = document.getElementById('notInscrit').checked;
+            let checkLast = document.getElementById('last').checked;
+            if(searchWord === undefined) searchWord = "";
+            if(dateStart === undefined) dateStart = "";
+            if(dateEnd === undefined) dateEnd = "";
+            let addBlock = document.getElementById('addBlock');
+            let table = document.getElementById('removeTable');
+            UrlBase = document.getElementById('url').innerHTML;
+            url = 'http://localhost' + UrlBase +'/axiosTable/';
+            axios.post(url,{
+                data: {
+                    site: site,
+                    searchWord: searchWord,
+                    dateStart: dateStart,
+                    dateEnd: dateEnd,
+                    checkInscrit: checkInscrit,
+                    checkNot: checkNot,
+                    checkOrga: checkOrga,
+                    checkLast: checkLast
+                }
+            }).then(function (response) {
+                let tableau = response.data;
+                console.log(tableau);
+                chargerTableau(tableau);
+            });
+        }
+
+        function formatDate(date)
+        {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+
+        function chargerTableau(tableau)
+        {
+            let tbody = document.querySelector('#tBody');
+            tbody.innerHTML = "";
+            for( let sortie of tableau){
+                let template = document.querySelector('#ligne');
+                let clone = template.content.cloneNode(true);
+                // je met le clone a l'intérieur du tbody
+
+                //  un tableau de selecteur td
+                let td = clone.querySelectorAll("td");
+                td[0].innerHTML = sortie.nom;
+                td[1].innerHTML = formatDate(sortie.dateSortie);
+                td[2].innerHTML = formatDate(sortie.dateLimite);
+                td[3].innerHTML = sortie.nb_participants +"/"+ sortie.nbPlace;
+                td[4].innerHTML = sortie.libelle;
+                if(sortie.isInscrit == true) {
+                    td[5].innerHTML = "X";
+                } else {
+                    td[5].innerHTML = "";
+                }
+                url = 'http://localhost' + UrlBase +'/profil/' + sortie.idOrganisateur;
+                td[6].innerHTML = "<a href="+url+">"+sortie.Organisateur+"</a>";
+
+                let btnDetail = clone.querySelector('#afficher');
+                if(sortie.detailSortie == true) {
+                    btnDetail.setAttribute("data-id", sortie.id);
+                } else {
+                    btnDetail.remove();
+                }
+                let btnEdit = clone.querySelector('#modifier');
+                if(sortie.editSortie == true) {
+                    btnEdit.setAttribute("data-id", sortie.id);
+                } else {
+                    btnEdit.remove();
+                }
+                let btnPublier = clone.querySelector('#publier');
+                if(sortie.publierSortie == true) {
+                    btnPublier.setAttribute("data-id", sortie.id);
+                } else {
+                    btnPublier.remove();
+                }
+                let btnInscrire = clone.querySelector('#inscrire');
+                if(sortie.inscription == true) {
+                    btnInscrire.setAttribute("data-id", sortie.id);
+                } else {
+                    btnInscrire.remove();
+                }
+                let btnDesister = clone.querySelector('#desister');
+                if(sortie.desistement == true) {
+                    btnDesister.setAttribute("data-id", sortie.id);
+                } else {
+                    btnDesister.remove();
+                }
+                let btnAnnuler = clone.querySelector('#annuler');
+                if(sortie.annulerSortie == true) {
+                    btnAnnuler.setAttribute("data-id", sortie.id);
+                } else {
+                    btnAnnuler.remove();
+                }
+                tbody.appendChild(clone);
+            }
+        }
+
+        function detailSortie(btnDetail)
+        {
+            let id = btnDetail.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/detailSortie/' + id;
+        }
+
+        function editSortie(btnEdit)
+        {
+            let id = btnEdit.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/editSortie/' + id;
+        }
+
+        function publierSortie(btnPublier)
+        {
+            let id = btnPublier.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/publierSortie/' + id;
+        }
+
+        function inscriptionSortie(btnInscrire)
+        {
+            let id = btnInscrire.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/inscriptionSortie/' + id;
+        }
+
+        function desisterSortie(btnDesister)
+        {
+            let id = btnDesister.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/desistement/' + id;
+        }
+
+        function annulerSortie(btnAnnuler)
+        {
+            let id = btnAnnuler.getAttribute('data-id');
+            window.document.location = 'http://localhost' + UrlBase +'/annulation/' + id;
+        }
+
         axios.post(url,{
             data: {
-                site: site,
-                searchWord: searchWord,
-                dateStart: dateStart,
-                dateEnd: dateEnd,
-                checkInscrit: checkInscrit,
-                checkNot: checkNot,
-                checkOrga: checkOrga,
-                checkLast: checkLast
+                site: "0",
+                searchWord: "",
+                dateStart: "",
+                dateEnd: "",
+                checkInscrit: false,
+                checkNot: false,
+                checkOrga: false,
+                checkLast: false
             }
         }).then(function (response) {
             let tableau = response.data;
             console.log(tableau);
             chargerTableau(tableau);
         });
-    }
-
-    function formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('/');
-    }
-
-    function chargerTableau(tableau) {
-        let tbody = document.querySelector('#tBody');
-        tbody.innerHTML = "";
-        for( let sortie of tableau){
-            let template = document.querySelector('#ligne');
-            let clone = template.content.cloneNode(true);
-            // je met le clone a l'intérieur du tbody
-
-            //  un tableau de selecteur td
-            let td = clone.querySelectorAll("td");
-            td[0].innerHTML = sortie.nom;
-            td[1].innerHTML = formatDate(sortie.dateSortie);
-            td[2].innerHTML = formatDate(sortie.dateLimite);
-            td[3].innerHTML = sortie.nb_participants +"/"+ sortie.nbPlace;
-            td[4].innerHTML = sortie.libelle;
-            if(sortie.isInscrit == true) {
-                td[5].innerHTML = "X";
-            } else {
-                td[5].innerHTML = "";
-            }
-            url = 'http://localhost' + UrlBase +'/profil/' + sortie.idOrganisateur;
-            td[6].innerHTML = "<a href="+url+">"+sortie.Organisateur+"</a>";
-
-            let btnDetail = clone.querySelector('#afficher');
-            if(sortie.detailSortie == true) {
-                btnDetail.setAttribute("data-id", sortie.id);
-            } else {
-                btnDetail.remove();
-            }
-            let btnEdit = clone.querySelector('#modifier');
-            if(sortie.editSortie == true) {
-                btnEdit.setAttribute("data-id", sortie.id);
-            } else {
-                btnEdit.remove();
-            }
-            let btnPublier = clone.querySelector('#publier');
-            if(sortie.publierSortie == true) {
-                btnPublier.setAttribute("data-id", sortie.id);
-            } else {
-                btnPublier.remove();
-            }
-            let btnInscrire = clone.querySelector('#inscrire');
-            if(sortie.inscription == true) {
-                btnInscrire.setAttribute("data-id", sortie.id);
-            } else {
-                btnInscrire.remove();
-            }
-            let btnDesister = clone.querySelector('#desister');
-            if(sortie.desistement == true) {
-                btnDesister.setAttribute("data-id", sortie.id);
-            } else {
-                btnDesister.remove();
-            }
-            let btnAnnuler = clone.querySelector('#annuler');
-            if(sortie.annulerSortie == true) {
-                btnAnnuler.setAttribute("data-id", sortie.id);
-            } else {
-                btnAnnuler.remove();
-            }
-            tbody.appendChild(clone);
-        }
-    }
-
-    function detailSortie(btnDetail) {
-        let id = btnDetail.getAttribute('data-id');
-        window.document.location = 'http://localhost' + UrlBase +'/detailSortie/' + id;
-    }
-
-    function editSortie(btnEdit) {
-        let id = btnEdit.getAttribute('data-id');
-        window.document.location = 'http://localhost' + UrlBase +'/editSortie/' + id;
-    }
-
-    function publierSortie(btnPublier) {
-        let id = btnPublier.getAttribute('data-id');
-        window.document.location = 'http://localhost' + UrlBase +'/publierSortie/' + id;
-    }
-
-    function inscriptionSortie(btnInscrire) {
-        let id = btnInscrire.getAttribute('data-id');
-        window.document.location = 'http://localhost' + UrlBase +'/inscriptionSortie/' + id;
-    }
-
-    function desisterSortie(btnDesister) {
-        let id = btnDesister.getAttribute('data-id');
-        window.document.location = 'http://localhost' + UrlBase +'/desistement/' + id;
-    }
-
-    function annulerSortie(btnAnnuler) {
-        let id = btnAnnuler.getAttribute('data-id');
-        window.document.location = 'http://localhost' + UrlBase +'/annulation/' + id;
-    }
-
-    axios.post(url,{
-        data: {
-            site: "0",
-            searchWord: "",
-            dateStart: "",
-            dateEnd: "",
-            checkInscrit: false,
-            checkNot: false,
-            checkOrga: false,
-            checkLast: false
-        }
-    }).then(function (response) {
-        let tableau = response.data;
-        console.log(tableau);
-        chargerTableau(tableau);
-    });
-</script>
+    </script>
 {% endblock %}
