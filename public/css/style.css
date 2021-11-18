@@ -67,3 +67,7 @@ button {
 .flash-success {
     background-color: darkseagreen;
 }
+
+.bg-custom-navbar{
+    background-color: #999999 !important;
+}
