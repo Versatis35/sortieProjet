@@ -5,7 +5,7 @@
 {% block body %}
 
     <div class="card container mt-3">
-        <h2 class="card-header">Mon profil</h2>
+        <h2 class="card-header" style="text-align: center">{{ user.pseudo }}</h2>
         <div class="card-body">
             {{ form_start(formulaireUser, {'multipart': true}) }}
             <div class="row-test">
@@ -16,7 +16,7 @@
                     {% else %}
                         <img class="rounded" src="{{ asset('img/imageDefaut.png') }}" alt="Image d'utilisateur par défault">
                     {% endif %}
-                </div>
+                <br></div>
                 <div class="col">
                     <div class="row">
                         <div class="col">
@@ -90,11 +90,10 @@
                             {{ form_widget(formulaireUser.photo) }}
                         </div>
                     </div>
-                    <div class="invisible">{{ form_rest(formulaireUser) }}</div>
-
-                    <div>
-                        <button type="submit" class="mx-auto d-block btn btn-primary">Enregistrer</button>
-                        <a href="{{ path("mon_profil") }}"><button type="button" class="mx-auto d-block btn btn-danger">Annuler</button></a>
+                    <div class="invisible">{{ form_rest(formulaireUser) }}</div><br>
+                    <div class="form-group" style="text-align: center">
+                        <button type="submit" class="mx-auto  btn btn-primary">Enregistrer</button>
+                        <a href="{{ path("mon_profil") }}"><button type="button" class="mx-auto  btn btn-danger">Annuler</button></a>
                     </div>
                 </div>
             </div>
