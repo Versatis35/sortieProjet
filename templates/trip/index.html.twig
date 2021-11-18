@@ -18,46 +18,49 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="col-5">
-                <h4>Filtrer les sorties</h4><br>
-                <label for="site">Site</label>
-                <select class="form-control" id="site" name="site">
-                    <option value="0">Tous les sites</option>
-                    {% for place in places %}
-                        <option value="{{ place.id }}">{{ place.nom }}</option>
-                    {% endfor %}
-                </select><br>
-                <label for="content">Le nom de la sortie contient</label>
-                <input class="form-control" type="search" name="content" id="content"><br>
-                <div class="row">
-                    <div class="col-6">
-                        <label for="dateStart">Entre </label>
-                        <input class="form-control" type="date" id="dateStart" name="dateStart">
-                    </div>
-                    <div class="col-6">
-                        <label for="dateEnd"> Et </label>
-                        <input class="form-control" type="date" id="dateEnd" name="dateEnd">
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col-6">
+                    <h4>Filtrer les sorties</h4><br>
+                    <label for="site">Site</label>
+                    <select class="form-control" id="site" name="site">
+                        <option value="0">Tous les sites</option>
+                        {% for place in places %}
+                            <option value="{{ place.id }}">{{ place.nom }}</option>
+                        {% endfor %}
+                    </select><br>
+                    <label for="content">Le nom de la sortie contient</label>
+                    <input class="form-control" type="search" name="content" id="content"><br>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="dateStart">Entre </label>
+                            <input class="form-control" type="date" id="dateStart" name="dateStart">
+                        </div>
+                        <div class="col-6">
+                            <label for="dateEnd"> Et </label>
+                            <input class="form-control" type="date" id="dateEnd" name="dateEnd">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-4 mt-3" style="margin-left: 20px">
-                <div class="form-check border border-dark mt-5" style="text-align: left; border-radius: 10px;">
-                    <label for="orga" class="form-check-label">Sorties dont je suis l'organisateur/trice</label>
-                    <input type="checkbox" class="form-check-input" name="orga" id="orga">
+                <div class="col-5 mt-3" style="margin-left: 20px">
+                    <div class="form-check mt-5" style="text-align: left; border-radius: 10px;">
+                        <label for="orga" class="form-check-label">Sorties dont je suis l'organisateur/trice</label>
+                        <input type="checkbox" class="form-check-input" name="orga" id="orga">
 
-                    <label for="inscrit" class="form-check-label">Sorties auxquelles je suis inscrit/e</label>
-                    <input type="checkbox" class="form-check-input" name="inscrit" id="inscrit">
+                        <label for="inscrit" class="form-check-label">Sorties auxquelles je suis inscrit/e</label>
+                        <input type="checkbox" class="form-check-input" name="inscrit" id="inscrit">
 
-                    <label for="notInscrit" class="form-check-label">Sorties auxquelles je ne suis pas inscrit/e</label>
-                    <input type="checkbox" class="form-check-input" name="notInscrit" id="notInscrit">
+                        <label for="notInscrit" class="form-check-label">Sorties auxquelles je ne suis pas inscrit/e</label>
+                        <input type="checkbox" class="form-check-input" name="notInscrit" id="notInscrit">
 
-                    <label for="last" class="form-check-label">Sorties passées</label>
-                    <input type="checkbox" class="form-check-input" name="last" id="last">
+                        <label for="last" class="form-check-label">Sorties passées</label>
+                        <input type="checkbox" class="form-check-input" name="last" id="last">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
                 <div class="form-group">
-                    <button class="btn btn-primary mt-5" onclick="doFilter()" type="submit">Rechercher</button>
+                    <div class="form-group">
+                        <button class="btn btn-primary mt-5" onclick="doFilter()" type="submit">Rechercher</button>
+                    </div>
                 </div>
             </div>
         </div><hr>

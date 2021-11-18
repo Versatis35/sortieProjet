@@ -10,6 +10,7 @@
     <!-- TODO : insérer image appli -->
     <!-- <link rel="icon" href="{{ asset("img/") }}" -->
     <title>{% block title %} Sortir {% endblock %}</title>
+    <link rel="icon" href="{{ asset("img/favicon.ico") }}" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
 </head>
 <body>
@@ -61,7 +62,7 @@
             {% endif %}
         </div>
     </nav>
-    <!-- END NAVBAR -->
+        <!-- END NAVBAR -->
 
     {# Lis et renvoit tous les messages flash #}
     {% for label, messages in app.flashes %}
@@ -76,10 +77,9 @@
         {% block body %}
         {% endblock %}
     </section>
-
     <!-- FOOTER -->
-    <footer class="py-5 bg-dark bg-custom-navbar">
-        <div class="container px-4 px-lg-5"><p class="m-0 text-center text-white">Copyright &copy; Sortir - {{ "now"|date('Y') }}</p></div>
+    <footer class="py-5 bg-custom-footer">
+        <div class="container px-4 px-lg-5"><p class="m-0 text-center">Copyright &copy; Sortir - {{ "now"|date('Y') }}</p></div>
     </footer>
     <!-- END FOOTER -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
