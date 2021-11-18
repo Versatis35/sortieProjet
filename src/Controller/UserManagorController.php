@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Place;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,9 +24,9 @@ use Symfony\Component\Validator\Constraints\Image;
 class UserManagorController extends AbstractController
 {
     /**
-     * @Route("/myprofil/modification", name="modification_mon_profil")
+     * @Route("/profil/modification/{id}", name="modification_profil")
      */
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index($id,Request $request, EntityManagerInterface $entityManager, UserRepository $repo): Response
     {
         # On appel le repository qui gère les users
         $repositoryUser = $entityManager->getRepository(User::class);
@@ -33,7 +34,7 @@ class UserManagorController extends AbstractController
         $error = "";
 
         #TODO :  On récupère l'utilisateur de la session (voir comment on le récupère)
-        $user = $this->getUser();
+        $user = $repo->findOneBy(['id'=>$id]);
         #Création du formulaire de modification
         $formulaireUser = $this->createFormBuilder([], ['label' => 'options', 'attr' => ['enctype' => 'multipart/form-data']])
             ->add('pseudo', TextType::class, ['label' => 'Pseudo', 'attr' => ['value' => $user->getPseudo()]])

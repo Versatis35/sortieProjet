@@ -27,7 +27,7 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.site.nom }}</td>
                     <td>
-                        <a href="" class="btn btn-primary">Modifier</a>
+                        <a href="{{ path('modification_profil', {id: user.id}) }}" class="btn btn-primary">Modifier</a>
                         {% if user.active %}
                             <a href="{{ path('desactiver_utilisateur', {id: user.id}) }}" class="btn btn-warning">Désactiver</a>
                         {% else  %}

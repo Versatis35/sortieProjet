@@ -26,6 +26,20 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Gestion utilisateur
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="{{ path('creation_utilisateur') }}">Créer un utilisateur</a></li>
+                                <li><a class="dropdown-item" href="{{ path('admin') }}">Importer des utilisateurs</a></li>
+                                <li><a class="dropdown-item" href="{{ path('gestion_utilisateur') }}">Gérer les utilisateurs</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link" href="{{ path('gerer_ville') }}"> Villes </a></li>
                     </ul>
                 </div>

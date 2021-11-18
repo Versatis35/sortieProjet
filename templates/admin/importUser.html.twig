@@ -5,8 +5,9 @@
 
 {% block body %}
     {{ form_start(uploadform) }} {# <form ...> #}
-    <button class="btn btn-success" id="btnAddTeam">
-        <i class="fa fa-plus"></i>
+    {{ form_row(uploadform.file) }}
+    <button class="btn btn-lg btn-primary mt-4" type="submit">
+        Importer
     </button>
     {{ form_end(uploadform) }} {# <form ...> #}
 {% endblock %}

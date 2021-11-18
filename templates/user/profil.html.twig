@@ -47,7 +47,7 @@
         {% if user == userActual or is_granted('ROLE_ADMIN') %}
         <div class="row mx-1">
             <div class="col-4">
-                <a href="{{ path('modification_mon_profil') }}">
+                <a href="{{ path('modification_profil', {id: user.id}) }}">
                     <button class="btn btn-primary">
                         <i class="fa fa-plus">Modifier le profil</i>
                     </button>
