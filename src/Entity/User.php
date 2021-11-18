@@ -85,6 +85,11 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
      */
     private $photo;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $active;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -292,6 +297,18 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
     public function setPhoto($photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

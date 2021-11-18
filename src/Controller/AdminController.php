@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Trip;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\PlaceRepository;
@@ -82,6 +83,7 @@ class AdminController extends AbstractController
             "uploadform"=>$form->createView()
         ]);
     }
+
     /**
      * @Route("/admin/creationUtilisateur", name="creation_utilisateur")
      */
@@ -108,7 +110,69 @@ class AdminController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/admin/gestionUtilisateur", name="gestion_utilisateur")
+     */
+    public function gestionUser(UserRepository $userRepo): Response
+    {
+        if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN') == false) {
+            return $this->redirectToRoute('home');
+        }
 
+        $users = $userRepo->findAll();
+
+        return $this->render('admin/gestionUser.html.twig', ['users' => $users]);
+    }
+
+    /**
+     * @Route("/admin/desactivation/{id}", name="desactiver_utilisateur")
+     */
+    public function desactiverUser(User $user): Response
+    {
+        if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN') == false) {
+            return $this->redirectToRoute('home');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $user->setActive(false);
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('gestion_utilisateur');
+    }
+
+    /**
+     * @Route("/admin/activation/{id}", name="activer_utilisateur")
+     */
+    public function activerUser(User $user): Response
+    {
+        if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN') == false) {
+            return $this->redirectToRoute('home');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $user->setActive(true);
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('gestion_utilisateur');
+    }
+
+    /**
+     * @Route("/admin/suppression/{id}", name="supprimer_utilisateur")
+     */
+    public function deleteUser(User $user): Response
+    {
+        if($this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN') == false) {
+            return $this->redirectToRoute('home');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
+
+        return $this->redirectToRoute('gestion_utilisateur');
+    }
 
 
 }
