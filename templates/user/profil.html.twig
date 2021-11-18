@@ -20,39 +20,39 @@
         <div class="col">
             <!-- Prénom -->
             <div class="row mb-3">
-                <h5 class="form-label"> Prénom </h5>
+                <h5 class="form-label" style="font-weight: bold"> Prénom </h5>
                 <p class="col">{{ user.prenom }}
             </div>
             <!-- Nom -->
             <div class="row mb-3">
-                <h5 class="form-label"> Nom </h5>
+                <h5 class="form-label" style="font-weight: bold"> Nom </h5>
                 <p class="col">{{ user.nom }}
             </div>
             <!-- Téléphone -->
             <div class="row mb-3">
-                <h5 class="form-label"> Téléphone </h5>
+                <h5 class="form-label" style="font-weight: bold"> Téléphone </h5>
                 <p class="col">{{ user.telephone }}
             </div>
             <!-- Email -->
             <div class="row mb-3">
-                <h5 class="form-label"> Email </h5>
+                <h5 class="form-label" style="font-weight: bold"> Email </h5>
                 <p class="col">{{ user.email }}
             </div>
             <!-- Site de rattachement -->
             <div class="row mb-3">
-                <h5 class="form-label"> Site de rattachement </h5>
+                <h5 class="form-label" style="font-weight: bold"> Site de rattachement </h5>
                 <p class="col">{{ user.site }}
             </div>
         </div>
         {% if user == userActual or is_granted('ROLE_ADMIN') %}
-        <div class="row mx-1">
-            <div class="col-4">
+        <div class="container">
+            <div class="text-center">
                 <a href="{{ path('modification_profil', {id: user.id}) }}">
                     <button class="btn btn-primary">
-                        <i class="fa fa-plus">Modifier le profil</i>
+                        Modifier le profil
                     </button>
                 </a>
-            </div>
+            </div><br>
         </div>
         {% endif %}
     </div><br>
