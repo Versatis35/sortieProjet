@@ -402,7 +402,7 @@ class TripController extends AbstractController
             $trip["idOrganisateur"] = $tripSearch->getOrganisateur()->getId();
             $trip["detailSortie"] = true;
 
-            if($trip["Organisateur"] == $userActual->getPseudo() && $trip["libelle"] == "Créée") {
+            if(($trip["Organisateur"] == $userActual->getPseudo() && $trip["libelle"] == "Créée")) {
                 $trip["editSortie"] = true;
                 $trip["publierSortie"] = true;
             } else {
@@ -432,8 +432,8 @@ class TripController extends AbstractController
                 $trip["isInscrit"] = false;
             }
 
-            if($trip["Organisateur"] == $userActual->getPseudo()) {
-                if($trip["libelle"] == "Créée" || $trip["libelle"] == "Ouverte") {
+            if($trip["Organisateur"] == $userActual->getPseudo() || in_array("ROLE_ADMIN",$userActual->getRoles())) {
+                if($trip["libelle"] == "Créée" || $trip["libelle"] == "Ouverte" || in_array("ROLE_ADMIN",$userActual->getRoles())) {
                     $trip["annulerSortie"] = true;
                 } else {
                     $trip["annulerSortie"] = false;
