@@ -20,8 +20,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CityController extends AbstractController
 {
+
     /**
      * @Route("/admin/ville/gerer", name="gerer_ville")
+     * @param CityRepository $cityRepository
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @return Response
      */
     public function gererVille(CityRepository $cityRepository, Request $request, EntityManagerInterface $em): Response
     {
@@ -30,52 +35,92 @@ class CityController extends AbstractController
 
         // Ajouter une ville
         $city = New City();
+
+        // Création du formulaire
         $addCityForm = $this->createForm(AddCityType::class, $city);
+
+        // Exécute
         $addCityForm->handleRequest($request);
 
+        // Si le formulaire est envoyé
         if($addCityForm->isSubmitted())
         {
+            // On envoit dans la bdd
             $em->persist($city);
             $em->flush();
+
+            // On renvoit un message de succès
             $this->addFlash('success', 'Ville "'. $city->getNom() .'" ajoutée avec succès !');
+
+            // On redirige vers la page gerer_ville
             return $this->redirectToRoute('gerer_ville');
         }
 
+        // On redirige vers la page gerer_ville
         return $this->render('admin/gererVille.html.twig', [
             'city' => $Allcity,
             "addCityForm" => $addCityForm->createView()
         ]);
     }
 
+
     /**
      * @Route("/admin/ville/gerer/{id}", name="delete_city")
+     * @param EntityManagerInterface $em
+     * @param int $id
+     * @return Response
      */
     public function deleteCity(EntityManagerInterface $em, int $id): Response
     {
+        // On récupère l'identifiant
         $identifiant = $em->getRepository(City::class)->find($id);
+
+        // On supprime l'instance de la bdd
         $em->remove($identifiant);
+
+        // On envoit dans la bdd
         $em->flush();
+
+        // On retourne un message de succès
         $this->addFlash('success', 'Site supprimé avec succès !');
+
+        // On redirige vers la page gerer_ville
         return $this->redirectToRoute('gerer_ville');
     }
 
+
     /**
      * @Route("/admin/ville/modify/{id}", name="modify_city")
+     * @param EntityManagerInterface $em
+     * @param int $id
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function modifyCity(EntityManagerInterface $em, int $id, Request $request)
     {
-        $class = $em->getRepository(City::class);
+        // On récupère l'identifiant de l'instance
         $identifiant = $em->getRepository(City::class)->find($id);
+
+        // Création du formulaire sur la page
         $modifyCityForm = $this->createForm(ModifyCityType::class, $identifiant);
+
+        // Exécution
         $modifyCityForm->handleRequest($request);
 
+        // Si le formulaire est renvoyé
         if($modifyCityForm->isSubmitted())
         {
+            // On envoit les modifiacations dans la base de donnée
             $em->flush();
+
+            // On renvoit un message de succès
             $this->addFlash('success', 'Site modifié avec succès !');
+
+            // On se redirige vers la page gerer ville
             return $this->redirectToRoute('gerer_ville');
         }
 
+        // redirige vers la page gerer ville
         return $this->render('admin/modificationVille.html.twig', [
             'modifyCityForm' => $modifyCityForm->createView(),
             'id' => $id

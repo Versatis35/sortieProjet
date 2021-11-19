@@ -57,18 +57,19 @@
         <!-- Appel de la function au chargement de la page -->
         chargerVille();
 
-        <!-- Charge dynamiquement le tableau des villes -->
+        <!-- Charge dynamiquement le tableau des villes (lié au filtre) -->
         function chargerVille()
         {
             // Récupère la valeur de la textBox du filtre
             let searchWord = document.getElementById('searchWord').value;
 
-            // Récupère l'utr complet
+            // Récupère l'url complet
             let url = 'http://localhost' + UrlBase + '/ville/filtre';
 
             // On fait appel à de l'axios en faisant passé l'url et le contenu de la textBox du filtre
             axios.post(url,{searchWord}).then(function (response)
             {
+                // Le tableau contient toutes les valeurs retournées
                 let tableau = response.data;
 
                 // Permettra d'alimenter la balise <tbody> de la page
@@ -80,9 +81,10 @@
                 // Permettra d'alimenter chaque ligne du tableau
                 let template = document.querySelector('#lineData');
 
+                // Charge toutes les ville
                 for(let ville of tableau)
                 {
-                    // Permet de cloner et injecter dans le tbody
+                    // Permet de cloner et injecter dans le tbody (cloner permet de copier tous les attributs / valeurs)
                     let clone = template.content.cloneNode(true);
 
                     // Tableau pour les <td>
@@ -103,12 +105,14 @@
             });
         }
 
+        // Gère l'évènement de modification
         function modifier(btnModify)
         {
             let id = btnModify.getAttribute('data-id');
             window.document.location = 'http://localhost' + UrlBase +'/admin/ville/modify/' + id;
         }
 
+        // Gère l'événènement de suppression
         function supprimer(btnModify)
         {
             let id = btnModify.getAttribute('data-id');
