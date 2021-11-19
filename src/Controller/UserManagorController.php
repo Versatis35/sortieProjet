@@ -39,7 +39,7 @@ class UserManagorController extends AbstractController
         #Création du formulaire de modification
         $formulaireUser = $this->createFormBuilder([], ['label' => 'options', 'attr' => ['enctype' => 'multipart/form-data']])
             ->add('pseudo', TextType::class, ['label' => 'Pseudo', 'attr' => ['value' => $user->getPseudo()]])
-            ->add('telephone', TextType::class, ['label' => 'Prénom', 'attr' => ['value' => $user->getTelephone()]])
+            ->add('telephone', TextType::class, ['label' => 'Téléphone', 'attr' => ['value' => $user->getTelephone()]])
             ->add('email', TextType::class, ['label' => 'Email', 'attr' => ['value' => $user->getEmail()]])
             ->add('mdp', PasswordType::class, ['label' => 'Mot de passe', 'attr' => ['value' => $user->getMdp()]])
             ->add('confirmation', PasswordType::class, ['label' => 'Confirmation', 'attr' => ['value' => $user->getMdp()]])
