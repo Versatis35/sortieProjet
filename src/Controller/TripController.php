@@ -74,7 +74,7 @@ class TripController extends AbstractController
             $dateDebut = $formTrip->get('dateSortie');
             $dateFin = $formTrip->get('dateLimite');
             //Gestion des erreurs de date
-            if($dateFin->getData() < $dateDebut->getData()) {
+            if($dateFin->getData() > $dateDebut->getData()) {
                 $error = [
                     'messageKey' => -1,
                     'messageData' => "La date de fin ne peut être inférieure à la date de début"
