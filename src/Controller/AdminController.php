@@ -171,12 +171,26 @@ class AdminController extends AbstractController
         }
 
         $em = $this->getDoctrine()->getManager();
+        $trips = $user->getSorties();
+        foreach ($trips as $trip){
+            $trip->removeParticipant($user);
+            $em->persist($trip);
+        }
+        $em->flush();
+
+        $tripOrga = $user->getSortiesOrganisees();
+
+        foreach ($tripOrga as $tri){
+            foreach ($tri->getParticipants() as $use){
+                $tri->removeParticipant($use);
+            }
+            $em->remove($tri);
+            $em->flush();
+        }
         $em->remove($user);
         $em->flush();
 
         $this->addFlash('success', "L'utilisateur est supprimé avec succès");
         return $this->redirectToRoute('gestion_utilisateur');
     }
-
-
 }
