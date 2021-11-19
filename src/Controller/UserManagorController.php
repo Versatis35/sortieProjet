@@ -45,6 +45,7 @@ class UserManagorController extends AbstractController
             ->add('photo', FileType::class, [
                 'label' => 'Photo (.pnj/.jpg)',
                 'mapped'=> true,
+                'required'=> false,
                 'constraints' => [
                     new File([
                         // Le maxSize ne s'applique pas si dans config>packages>dev>web_profiler only_exceptions n'est pas à true
@@ -63,16 +64,16 @@ class UserManagorController extends AbstractController
 
             $data = $formulaireUser->getData();
             $error = $this->verifMdp($data, $user);
-            if($error == "" && !$data['photo']) {
+            if($error == "" && $data['photo'] != "") {
                 $mime = $data['photo']->getClientMimeType();
                 if($mime !== "image/png" && $mime != "image/jpeg") {
                     $error = "Format de fichier invalide";
                 }
             }
+            $pseudo = ['pseudo' => $data['pseudo']];
+            $error = $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
             if($error == "")  {
-                $pseudo = ['pseudo' => $data['pseudo']];
                 // On vérifie si le pseudo n'est pas prit
-                $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
                 $user->setPseudo($data['pseudo']);
                 $user->setTelephone($data['telephone']);
                 $user->setEmail($data['email']);
@@ -83,6 +84,8 @@ class UserManagorController extends AbstractController
                 }
                 $entityManager->flush();
                 return $this->redirectToRoute('mon_profil');
+            } else {
+                $this->addFlash('alert', $error);
             }
         }
         if($user->getPhoto() != null) {
@@ -117,6 +120,7 @@ class UserManagorController extends AbstractController
         {
             $this->addFlash('alert', "Ce pseudo est déjà prit par un autre utilisateur !");
         }
+        return "Ce pseudo est déjà prit par un autre utilisateur !";
     }
 
 }
