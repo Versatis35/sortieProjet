@@ -410,7 +410,7 @@ class TripController extends AbstractController
                 $trip["publierSortie"] = false;
             }
 
-            if($trip["Organisateur"] != $userActual->getPseudo() && !in_array($userActual, $tripSearch->getParticipants()->toArray())) {
+            if($tripSearch->getNbPlace()>$tripSearch->getParticipants()->count() && $trip["Organisateur"] != $userActual->getPseudo() && !in_array($userActual, $tripSearch->getParticipants()->toArray())) {
                 if($trip["libelle"] == "Ouverte" || $trip["libelle"] == "Activité en cours") {
                     $trip["inscription"] = true;
                 } else {
