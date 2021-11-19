@@ -445,7 +445,7 @@ class TripController extends AbstractController
             }
 
             if($trip["Organisateur"] == $userActual->getPseudo() || in_array("ROLE_ADMIN",$userActual->getRoles())) {
-                if($trip["libelle"] == "Créée" || $trip["libelle"] == "Ouverte" || in_array("ROLE_ADMIN",$userActual->getRoles())) {
+                if($trip["libelle"] == "Créée" || $trip["libelle"] == "Ouverte" || ( in_array("ROLE_ADMIN",$userActual->getRoles()) && $trip["libelle"] != "Annulée")) {
                     $trip["annulerSortie"] = true;
                 } else {
                     $trip["annulerSortie"] = false;

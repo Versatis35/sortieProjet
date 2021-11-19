@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\File;
@@ -87,7 +88,6 @@ class UserManagorController extends AbstractController
                 return $this->redirectToRoute('mon_profil');
             } else {
                 $this->addFlash('alert', $error);
-                $user = $userOrigin;
                 return $this->redirectToRoute('home');
             }
         }
