@@ -108,7 +108,7 @@ class CityController extends AbstractController
         $modifyCityForm->handleRequest($request);
 
         // Si le formulaire est renvoyé
-        if($modifyCityForm->isSubmitted())
+        if($modifyCityForm->isSubmitted() && $modifyCityForm->isValid())
         {
             // On envoit les modifiacations dans la base de donnée
             $em->flush();
