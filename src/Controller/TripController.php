@@ -47,10 +47,13 @@ class TripController extends AbstractController
 
     /**
      * @Route("/creationSortie", name="creation_sortie")
+     * Création ou modification d'une sortie
      */
     public function creation(Request $request, StateRepository $stateRepo, PlaceRepository $placeRepo, LocationRepository $locRepo, CityRepository $repoCity): Response
     {
+        //Récupération de l'utilisateur
         $authUser = $this->getUser();
+        //Information sur les lieux de sortie pour afficher la map
         $location = $locRepo->find(1);
         $latitude = $location->getLatitude();
         $longitude = $location->getLongitude();
@@ -59,13 +62,18 @@ class TripController extends AbstractController
         $error = "";
         $trip = new Trip();
         $locForm = new Location();
+        //Formulaire d'ajout de lieu
         $formLocation = $this->createForm(LocationType::class,$locForm);
+        //Formulaire d'ajout de sortie
         $formTrip = $this->createForm(TripType::class,$trip);
+        //récupération des données des formulaires
         $formTrip->handleRequest($request);
         $formLocation->handleRequest($request);
+        //Si le formulaire est envoyé et passe la validation
         if ($formTrip->isSubmitted() && $formTrip->isValid()){
             $dateDebut = $formTrip->get('dateSortie');
             $dateFin = $formTrip->get('dateLimite');
+            //Gestion des erreurs de date
             if($dateFin->getData() < $dateDebut->getData()) {
                 $error = [
                     'messageKey' => -1,
@@ -73,6 +81,7 @@ class TripController extends AbstractController
                 ];
             }
             if($error == "") {
+                //On enregistrer la sortie
                 $trip->setOrganisateur($authUser);
                 $state = $stateRepo->find($request->get('btn'));
                 $trip->setEtat($state);
@@ -82,6 +91,7 @@ class TripController extends AbstractController
                 return $this->redirectToRoute('home');
             }
         }
+        //Si le formulaire du lieu est validé on l'enregistre
         if($formLocation->isSubmitted()) {
             $em = $this->getDoctrine()->getManager();
             $locForm->setVille($repoCity->findOneBy(['id'=>$request->request->get("location")['ville']]));
@@ -95,6 +105,7 @@ class TripController extends AbstractController
             $trip->setLieu($location);
             $formTrip = $this->createForm(TripType::class,$trip);
         }
+        //Envoie a la vue de toute les données nécéssaire
         return $this->render('trip/creation.html.twig', [
             'trip' => $trip,
             'user' => $authUser,
