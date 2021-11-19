@@ -75,6 +75,10 @@ button {
     background-color: darkseagreen;
 }
 
+.flash-error {
+    background-color: #B0413E;
+}
+
 .bg-custom-navbar{
     background: linear-gradient(#aaa, rgba(255, 255, 255, 0));
 }

@@ -86,7 +86,7 @@ class AdminController extends AbstractController
             // et les envoyer dans la base de donnée
             $em->flush();
             // Et on affiche le message de succès
-            $this->addFlash('success', "Les utilisateurs ont été importées avec succès !");
+            $this->addFlash('success', "Les utilisateurs ont été importés avec succès !");
 
         }
         return $this->render('admin/importUser.html.twig',
