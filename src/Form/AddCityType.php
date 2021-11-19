@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\City;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +16,7 @@ class AddCityType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, ['label' => 'Nom'])
-            ->add('codePostal', TextType::class, ['label' => 'Code postal'])
+            ->add('codePostal', IntegerType::class, ['label' => 'Code postal'])
             ->add('pays', TextType::class, ['label' => 'Pays'])
             ->add('add', SubmitType::class, ['label' => 'Ajouter'])
         ;
