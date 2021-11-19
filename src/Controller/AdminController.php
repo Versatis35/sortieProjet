@@ -111,6 +111,7 @@ class AdminController extends AbstractController
                     $formUser->get('password')->getData()
                 )
             );
+            $user->setActive(true);
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
