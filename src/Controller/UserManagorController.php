@@ -29,12 +29,12 @@ class UserManagorController extends AbstractController
     public function index($id,Request $request, EntityManagerInterface $entityManager, UserRepository $repo): Response
     {
         # On appel le repository qui gère les users
-        $repositoryUser = $entityManager->getRepository(User::class);
+        $repositoryUser = $repo;
         $repositoryPlace = $entityManager->getRepository(Place::class);
         $error = "";
 
-        #TODO :  On récupère l'utilisateur de la session (voir comment on le récupère)
         $user = $repo->findOneBy(['id'=>$id]);
+        $userOrigin = $user;
         #Création du formulaire de modification
         $formulaireUser = $this->createFormBuilder([], ['label' => 'options', 'attr' => ['enctype' => 'multipart/form-data']])
             ->add('pseudo', TextType::class, ['label' => 'Pseudo', 'attr' => ['value' => $user->getPseudo()]])
@@ -70,8 +70,8 @@ class UserManagorController extends AbstractController
                     $error = "Format de fichier invalide";
                 }
             }
-            $pseudo = ['pseudo' => $data['pseudo']];
-            $error = $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
+            $pseudo = $data['pseudo'];
+            if($error == "") $error = $this->verifPseudo($pseudo, $repositoryUser, $data, $user);
             if($error == "")  {
                 // On vérifie si le pseudo n'est pas prit
                 $user->setPseudo($data['pseudo']);
@@ -82,10 +82,13 @@ class UserManagorController extends AbstractController
                     $strm = fopen($data['photo']->getRealPath(), 'rb');
                     $user->setPhoto(stream_get_contents($strm));
                 }
+                $entityManager->persist($user);
                 $entityManager->flush();
                 return $this->redirectToRoute('mon_profil');
             } else {
                 $this->addFlash('alert', $error);
+                $user = $userOrigin;
+                return $this->redirectToRoute('home');
             }
         }
         if($user->getPhoto() != null) {
@@ -107,20 +110,22 @@ class UserManagorController extends AbstractController
         if($data['mdp'] != $data['confirmation'])
         {
             $error = "Les mots de passe ne sont pas identiques";
-            $this->addFlash('error', "Les mots de passe ne sont pas identiques");
+        } else {
+            $profil->setPassword(password_hash($data['mdp'], PASSWORD_DEFAULT));
         }
 
-        $profil->setPassword(password_hash($data['mdp'], PASSWORD_DEFAULT));
         return $error;
     }
 
     public function verifPseudo($pseudo, $repositoryUser, $data, $user)
     {
-        if(in_array($pseudo, $repositoryUser->getAllPseudo()) && $data['pseudo'] != $user->getPseudo())
+        $userTest = $repositoryUser->findOneBy(['pseudo'=>$pseudo]);
+        if($userTest!="" && $userTest != $user)
         {
-            $this->addFlash('alert', "Ce pseudo est déjà prit par un autre utilisateur !");
+            return "Ce pseudo est déjà prit par un autre utilisateur !";
         }
-        return "Ce pseudo est déjà prit par un autre utilisateur !";
+        return "";
+
     }
 
 }

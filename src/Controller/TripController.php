@@ -320,6 +320,7 @@ class TripController extends AbstractController
         $checkInscrit = $obj->checkInscrit;
         $checkNot = $obj->checkNot;
         $checkLast = $obj->checkLast;
+        $checkLast = $obj->checkLast;
 
         $firstWhereSet = false;
 
