@@ -25,57 +25,67 @@ class AdminController extends AbstractController
         $defaultData = [];
         $form = $this->createFormBuilder($defaultData)
             ->add('file', FileType::class, [
-                // unmapped means that this field is not associated to any entity property
                 'mapped' => false,
                 'label'=>"Fichier d'import",
 
-                // make it optional so you don't have to re-upload the PDF file
-                // every time you edit the Product details
                 'required' => false,])
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // data is an array with "name", "email", and "message" keys
-
             $file = $form->get('file')->getData();
+            // Nom des colonnes
             $header = NULL;
+            // données
             $data = array();
+            // Si on peut ouvrir le fichier en mode r (Read)
             if (($handle = fopen($file->getRealPath(), 'r')) !== FALSE) {
+                // Tant qu'il y a des lignes à lire, on défile
                 while (($row = fgetcsv($handle, 1000, ";", '"')) !== FALSE) {
+                    // Si nos noms de colonnes ne sont pas inscrites alors la premiere ligne lue = nom de colonne
                     if(!$header) {
                         $header = $row;
                     } else {
+                        // Sinon on va mapper chaque cellule de la ligne lue avec la colonne correspondante
                         $data[] = array_combine($header, $row);
                     }
                 }
             }
+            // On ferme la lecture du fichier
             fclose($handle);
             $em = $this->getDoctrine()->getManager();
+            // Tant qu'il y a de la donnée à lire
             foreach($data as $row) {
+                // Il y a une erreur dans la récupération de la première colonne, on passe donc par une lecture par index
                 $rowPseudo = array_values($row);
                 $user = new User();
+                // Et on mappe chaque donnée à un nouvel utilisateur
                 $user->setPseudo($rowPseudo[0]);
                 $user->setNom($row["nom"]);
                 $user->setPrenom($row["prenom"]);
                 $user->setActive($row["active"]);
                 $user->setEmail($row["email"]);
+                // Sans oublier de mapper avec les bonnes correlations
                 $site = $repo->findOneBy([
                     "id"=>$row["site"]
                 ]);
                 $user->setSite($site);
                 $user->setTelephone($row["telephone"]);
                 $user->setRoles(["ROLE_USER"]);
+                // Ainsi que de hasher le mot de passe
                 $user->setPassword(
                     $passwordEncoder->hashPassword(
                         $user,
                         $row["password"]
                     )
                 );
+                // Pour sauvegarder chaque utilisateur créés
                 $em->persist($user);
             }
+            // et les envoyer dans la base de donnée
             $em->flush();
+            // Et on affiche le message de succès
             $this->addFlash('success', "Les utilisateurs ont été importées avec succès !");
 
         }
