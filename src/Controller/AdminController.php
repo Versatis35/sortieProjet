@@ -59,6 +59,7 @@ class AdminController extends AbstractController
                 $user->setPseudo($rowPseudo[0]);
                 $user->setNom($row["nom"]);
                 $user->setPrenom($row["prenom"]);
+                $user->setActive($row["active"]);
                 $user->setEmail($row["email"]);
                 $site = $repo->findOneBy([
                     "id"=>$row["site"]
@@ -75,7 +76,7 @@ class AdminController extends AbstractController
                 $em->persist($user);
             }
             $em->flush();
-            $this->addFlash('success','Bien ajouté avec succès');
+            $this->addFlash('success', "Les utilisateurs ont été importées avec succès !");
 
         }
         return $this->render('admin/importUser.html.twig',
