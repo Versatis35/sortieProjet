@@ -55,6 +55,23 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <h3 class="text-center">Liste des participants</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Pseudo</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for participant in trip.participants %}
+                <tr>
+                    <td>{{ participant.pseudo }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <!-- Fichiers Javascript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
